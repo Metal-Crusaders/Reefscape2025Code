@@ -26,7 +26,28 @@ public class Constants {
         public static final double L3_ENCODER_TICKS = 300;
         public static final double MAX_ENCODER_TICKS = 400; // TODO FIGURE THESE OUT
 
-        public static final double[] ELEVATOR_PID = {1, 0, 0};
+        public static final double[] ELEVATOR_PID = {0.15, 0, 0, 0.5}; // kP, kI, kD, kF
+        // TODO FIGURE THE PID OUT TOO, using Cranberry Alarm's initial values for now
+
+        public static final double MAX_VELOCITY = 10.0;
+        public static final double MAX_ACCELERATION = 10.0;
+        public static final double RAMP_RATE = 20.0;
+
+        public static final double ELEVATOR_TICKS_DEADBAND = 10;
+
+    }
+
+    public static class CoralShooterConstants {
+
+        public static final int CORAL_LEFT = 17;
+        public static final int CORAL_RIGHT = 18;
+
+        public static final boolean leftInverted = false;
+
+        public static final double RAMP_RATE = 20.0;
+
+        public static final int CORAL_BEAM_ID = 1;
+        public static final int CORAL_BEAM_SENSOR_ID = 2;
 
     }
 
