@@ -15,10 +15,14 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.auto.TestPathAuto;
+import frc.robot.commands.scoring.coral.IntakeCoral;
+import frc.robot.commands.scoring.coral.ScoreCoral;
+import frc.robot.commands.scoring.coral.ScoreCoralL1;
 import frc.robot.commands.swerve.SwerveTeleop;
 import frc.robot.constants.Constants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.camera.AprilTagCamera;
+import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.SwerveTelemetry;
 
@@ -35,23 +39,33 @@ public class RobotContainer {
     private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
         .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController driverController = new CommandXboxController(0);
+    private final CommandXboxController operatorController = new CommandXboxController(1);
 
+    // SUBSYSTEMS
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-
     public final SwerveTelemetry logger = new SwerveTelemetry(MaxSpeed);
+
+    // public final CoralShooter coralShooter = new CoralShooter();
 
     // CAMERA STUFF // TODO UNCOMMENT THIS WHEN PHOTONVISION STUFF COMES OUT
     public AprilTagCamera camera = new AprilTagCamera(Constants.CameraConstants.CAMERA_1_NAME, Constants.CameraConstants.CAMERA_1_POS, drivetrain);
 
     // COMMANDS!!
 
-    private final SwerveTeleop swerveTeleop = new SwerveTeleop(drivetrain, joystick);
-    // private final Command reefDriveAuto = new SwerveToPose(drivetrain, 5, 5, 90);
-    private final Command topCoralAutoDrive = drivetrain.driveToPose(1.020, 6.922, 130, joystick);
-    private final Command bottomCoralAutoDrive = drivetrain.driveToPose(1.428, 0.828, -130, joystick);
+    // drivetrain
+
+    private final Command swerveTeleop = new SwerveTeleop(drivetrain, driverController);
+    private final Command topCoralAutoDrive = drivetrain.driveToPose(1.020, 6.922, 130, driverController);
+    private final Command bottomCoralAutoDrive = drivetrain.driveToPose(1.428, 0.828, -130, driverController);
+
+    // shooting test
+    // private final Command intakeCoral = new IntakeCoral(coralShooter);
+    // private final Command scoreCoral = new ScoreCoral(coralShooter);
+    // private final Command scoreCoralL1 = new ScoreCoralL1(coralShooter);
+
+    // autonomous
     private final Command testPathAuto = new TestPathAuto(drivetrain);
-    // private final Command testPathAuto = null;
 
     private void configureBindings() {
         // drivetrain.setDefaultCommand(
@@ -85,8 +99,12 @@ public class RobotContainer {
         // // reset the field-centric heading on left bumper press
         // joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick.leftBumper().onTrue(topCoralAutoDrive);
-        joystick.rightBumper().onTrue(bottomCoralAutoDrive);
+        // operatorController.a().onTrue(intakeCoral);
+        // operatorController.x().onTrue(scoreCoral);
+        // operatorController.b().onTrue(scoreCoralL1);
+
+        driverController.leftBumper().onTrue(topCoralAutoDrive);
+        driverController.rightBumper().onTrue(bottomCoralAutoDrive);
 
         drivetrain.setDefaultCommand(swerveTeleop);
 
