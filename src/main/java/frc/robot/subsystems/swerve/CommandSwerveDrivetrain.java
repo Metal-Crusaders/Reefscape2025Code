@@ -1,8 +1,6 @@
 package frc.robot.subsystems.swerve;
 
 import static edu.wpi.first.units.Units.*;
-
-import java.util.List;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -14,10 +12,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.math.Matrix;
@@ -30,11 +26,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.JoystickInterruptible;
 import frc.robot.constants.Constants;
 import frc.robot.constants.TunerConstants.TunerSwerveDrivetrain;
 
@@ -263,29 +256,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
      }
 
-    //  public Command driveToPose(double goX, double goY, double heading) {
-    //     Pose2d endPose = new Pose2d(goX, goY, new Rotation2d(heading * Math.PI / 180.0));
-
-    //     // All the things for generation:
-    //     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-    //         this.getState().Pose,
-    //         endPose
-    //     );
-    //     PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
-
-    //     PathPlannerPath path = new PathPlannerPath(
-    //         waypoints,
-    //         constraints,
-    //         null, // The ideal starting state, this is only relevant for pre-planned paths, so can be null for on-the-fly paths.
-    //         new GoalEndState(0.0, Rotation2d.fromDegrees(heading)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
-    //     );
-
-    //     path.preventFlipping = true;
-
-    //     return this.driveAlongPath(path);
-    //  }
-
-     public Command driveToPose(double goX, double goY, double heading, CommandXboxController xbox) {
+     public Command driveToPose(double goX, double goY, double heading) {
         Pose2d endPose = new Pose2d(goX, goY, new Rotation2d(heading * Math.PI / 180.0));
         PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
 
@@ -295,7 +266,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             0.0 // Goal end velocity in meters/sec
         );
 
-        return new JoystickInterruptible(pathfindingCommand, xbox, 0.5);
+        return pathfindingCommand;
+     }
+
+     public Command driveToPose(Pose2d endPose) {
+        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+
+        Command pathfindingCommand = AutoBuilder.pathfindToPose(
+            endPose,
+            constraints,
+            0.0 // Goal end velocity in meters/sec
+        );
+
+        return pathfindingCommand;
      }
 
     /**

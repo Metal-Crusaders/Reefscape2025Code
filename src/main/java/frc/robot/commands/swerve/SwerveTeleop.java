@@ -15,7 +15,7 @@ public class SwerveTeleop extends Command {
 
     private static final double MAX_TRANSLATION_SPEED = 3.0; // meters per second
     private static final double MAX_ROTATION_SPEED = Math.PI; // radians per second
-    private static final double DEADBAND = 0.12;
+    private static final double DEADBAND = 0.15;
 
     private double targetAngle, prevTargetAngle = 0;
 
@@ -53,8 +53,8 @@ public class SwerveTeleop extends Command {
     @Override
     public void execute() {
         // Get joystick inputs
-        double translationX = controller.getLeftY();
-        double translationY = controller.getLeftX();
+        double translationX = -controller.getLeftY();
+        double translationY = -controller.getLeftX();
         double rotation = -controller.getRightX();
 
         // Apply deadband

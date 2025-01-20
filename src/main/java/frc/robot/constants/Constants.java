@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -10,6 +12,28 @@ public class Constants {
 
         public static final double[] TRANSLATION_PP_PID = {10, 0, 0};
         public static final double[] ROTATION_PP_PID = {7, 0, 0};
+
+    }
+
+    public static class AutoDriveConstants {
+
+        public static final Pose2d[] BLUE_REEF_POSES = {
+            new Pose2d(2.823, 4.000, new Rotation2d(0 * Math.PI / 180.0)),
+            new Pose2d(3.719, 2.614, new Rotation2d(60 * Math.PI / 180.0)),
+            new Pose2d(5.430, 2.640, new Rotation2d(120 * Math.PI / 180.0)),
+            new Pose2d(6.000, 4.000, new Rotation2d(180 * Math.PI / 180.0)),
+            new Pose2d(5.432, 5.132, new Rotation2d(-120 * Math.PI / 180.0)),
+            new Pose2d(3.689, 5.515, new Rotation2d(-60 * Math.PI / 180.0))
+        };
+
+        public static final Pose2d[] RED_REEF_POSES = {
+            new Pose2d(2.823 + 8.553921, 4.000, new Rotation2d(0 * Math.PI / 180.0)),
+            new Pose2d(3.719 + 8.553921, 2.614, new Rotation2d(60 * Math.PI / 180.0)),
+            new Pose2d(5.430 + 8.553921, 2.640, new Rotation2d(120 * Math.PI / 180.0)),
+            new Pose2d(6.000 + 8.553921, 4.000, new Rotation2d(180 * Math.PI / 180.0)),
+            new Pose2d(5.432 + 8.553921, 5.132, new Rotation2d(-120 * Math.PI / 180.0)),
+            new Pose2d(3.689 + 8.553921, 5.515, new Rotation2d(-60 * Math.PI / 180.0))
+        };
 
     }
 

@@ -17,29 +17,29 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.CoralShooterConstants;
 
-public class CoralShooter extends SubsystemBase {
+public class AlgaeClaw extends SubsystemBase {
 
-    private SparkMax leftMotor, rightMotor;
+    private SparkMax clawMotor, pivotMotor;
 
     private DigitalInput beamSensor;
     private DigitalOutput beam;
 
-    public CoralShooter() {
-        this.leftMotor = new SparkMax(Constants.CoralShooterConstants.CORAL_LEFT, MotorType.kBrushless);
-        this.rightMotor = new SparkMax(Constants.CoralShooterConstants.CORAL_RIGHT, MotorType.kBrushless);
+    public AlgaeClaw() {
+        this.clawMotor = new SparkMax(Constants.ElevatorConstants.ELEVATOR_LEFT, MotorType.kBrushless);
+        this.pivotMotor = new SparkMax(Constants.ElevatorConstants.ELEVATOR_RIGHT, MotorType.kBrushless);
 
-        SparkMaxConfig leftConfig = new SparkMaxConfig();
-        leftConfig.inverted(Constants.CoralShooterConstants.leftInverted).idleMode(IdleMode.kBrake);
-        leftConfig.encoder.positionConversionFactor(420).velocityConversionFactor(420);
-        leftConfig.closedLoopRampRate(CoralShooterConstants.RAMP_RATE);
+        SparkMaxConfig clawConfig = new SparkMaxConfig();
+        clawConfig.inverted(Constants.ElevatorConstants.leftInverted).idleMode(IdleMode.kBrake);
+        clawConfig.encoder.positionConversionFactor(420).velocityConversionFactor(420);
+        clawConfig.closedLoopRampRate(CoralShooterConstants.RAMP_RATE);
 
         SparkMaxConfig rightConfig = new SparkMaxConfig();
-        rightConfig.inverted(!Constants.CoralShooterConstants.leftInverted).idleMode(IdleMode.kBrake);
+        rightConfig.inverted(!Constants.ElevatorConstants.leftInverted).idleMode(IdleMode.kBrake);
         rightConfig.encoder.positionConversionFactor(420).velocityConversionFactor(420);
         rightConfig.closedLoopRampRate(CoralShooterConstants.RAMP_RATE);
         
-        leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        rightMotor.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        clawMotor.configure(clawConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        pivotMotor.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // beam break
         this.beam = new DigitalOutput(CoralShooterConstants.CORAL_BEAM_ID);
@@ -48,22 +48,22 @@ public class CoralShooter extends SubsystemBase {
     }
 
     public void stop() {
-        this.leftMotor.set(0);
-        this.rightMotor.set(0);
+        this.clawMotor.set(0);
+        this.pivotMotor.set(0);
     }
 
-    public SparkMax getLeftMotor() {
-        return this.leftMotor;
+    public SparkMax getClawMotor() {
+        return this.clawMotor;
     }
 
-    public SparkMax getRightMotor() {
-        return this.rightMotor;
+    public SparkMax getPivotMotor() {
+        return this.pivotMotor;
     }
 
     public void set(double left, double right) {
         // sets percentage speed for now, TODO change to velocity PID!
-        this.leftMotor.set(left);
-        this.rightMotor.set(right);
+        this.clawMotor.set(left);
+        this.pivotMotor.set(right);
     }
 
     public boolean beamExists() {

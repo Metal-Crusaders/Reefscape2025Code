@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -18,7 +19,12 @@ import frc.robot.commands.auto.TestPathAuto;
 import frc.robot.commands.scoring.coral.IntakeCoral;
 import frc.robot.commands.scoring.coral.ScoreCoral;
 import frc.robot.commands.scoring.coral.ScoreCoralL1;
+import frc.robot.commands.swerve.DriveToClosestReef;
+import frc.robot.commands.swerve.AutoDriveCoralLeft;
+import frc.robot.commands.swerve.AutoDriveCoralRight;
+import frc.robot.commands.swerve.AutoDriveProcessor;
 import frc.robot.commands.swerve.SwerveTeleop;
+import frc.robot.commands.utils.JoystickInterruptible;
 import frc.robot.constants.Constants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.camera.AprilTagCamera;
@@ -49,15 +55,17 @@ public class RobotContainer {
     // public final CoralShooter coralShooter = new CoralShooter();
 
     // CAMERA STUFF // TODO UNCOMMENT THIS WHEN PHOTONVISION STUFF COMES OUT
-    public AprilTagCamera camera = new AprilTagCamera(Constants.CameraConstants.CAMERA_1_NAME, Constants.CameraConstants.CAMERA_1_POS, drivetrain);
+    // public AprilTagCamera camera = new AprilTagCamera(Constants.CameraConstants.CAMERA_1_NAME, Constants.CameraConstants.CAMERA_1_POS, drivetrain);
 
     // COMMANDS!!
 
     // drivetrain
 
     private final Command swerveTeleop = new SwerveTeleop(drivetrain, driverController);
-    private final Command topCoralAutoDrive = drivetrain.driveToPose(1.020, 6.922, 130, driverController);
-    private final Command bottomCoralAutoDrive = drivetrain.driveToPose(1.428, 0.828, -130, driverController);
+    private final Command leftCoralAutoDrive = new JoystickInterruptible(new AutoDriveCoralLeft(drivetrain), driverController, 0.5);
+    private final Command rightCoralAutoDrive = new JoystickInterruptible(new AutoDriveCoralRight(drivetrain), driverController, 0.5);
+    private final Command processorAutoDrive = new JoystickInterruptible(new AutoDriveProcessor(drivetrain), driverController, 0.5);
+    private final Command reefAutoDrive = new JoystickInterruptible(new DriveToClosestReef(drivetrain), driverController, 0.5);
 
     // shooting test
     // private final Command intakeCoral = new IntakeCoral(coralShooter);
@@ -71,40 +79,42 @@ public class RobotContainer {
         // drivetrain.setDefaultCommand(
         //     // Drivetrain will execute this command periodically
         //     drivetrain.applyRequest(() ->
-        //         drive.withVelocityX(joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-        //             .withVelocityY(joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-        //             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        //         drive.withVelocityX(driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        //             .withVelocityY(driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        //             .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         //     )
         // );
 
-        // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
-        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        // driverController.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        // driverController.b().whileTrue(drivetrain.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-driverController.getLeftY(), -driverController.getLeftX()))
         // ));
 
-        // joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
+        // driverController.pov(0).whileTrue(drivetrain.applyRequest(() ->
         //     forwardStraight.withVelocityX(0.5).withVelocityY(0))
         // );
-        // joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
+        // driverController.pov(180).whileTrue(drivetrain.applyRequest(() ->
         //     forwardStraight.withVelocityX(-0.5).withVelocityY(0))
         // );
 
         // // Run SysId routines when holding back/start and X/Y.
         // // Note that each routine should be run exactly once in a single log.
-        // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // driverController.back().and(driverController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // driverController.back().and(driverController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // driverController.start().and(driverController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // // reset the field-centric heading on left bumper press
-        // joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // operatorController.a().onTrue(intakeCoral);
         // operatorController.x().onTrue(scoreCoral);
         // operatorController.b().onTrue(scoreCoralL1);
 
-        driverController.leftBumper().onTrue(topCoralAutoDrive);
-        driverController.rightBumper().onTrue(bottomCoralAutoDrive);
+        driverController.leftBumper().onTrue(leftCoralAutoDrive);
+        driverController.rightBumper().onTrue(rightCoralAutoDrive);
+        driverController.leftStick().onTrue(reefAutoDrive);
+        driverController.rightStick().onTrue(processorAutoDrive);
 
         drivetrain.setDefaultCommand(swerveTeleop);
 
