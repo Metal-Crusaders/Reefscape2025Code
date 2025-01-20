@@ -29,12 +29,12 @@ public class CoralShooter extends SubsystemBase {
         this.rightMotor = new SparkMax(Constants.CoralShooterConstants.CORAL_RIGHT, MotorType.kBrushless);
 
         SparkMaxConfig leftConfig = new SparkMaxConfig();
-        leftConfig.inverted(Constants.CoralShooterConstants.leftInverted).idleMode(IdleMode.kBrake);
+        leftConfig.inverted(Constants.CoralShooterConstants.LEFT_INVERTED).idleMode(IdleMode.kBrake);
         leftConfig.encoder.positionConversionFactor(420).velocityConversionFactor(420);
         leftConfig.closedLoopRampRate(CoralShooterConstants.RAMP_RATE);
 
         SparkMaxConfig rightConfig = new SparkMaxConfig();
-        rightConfig.inverted(!Constants.CoralShooterConstants.leftInverted).idleMode(IdleMode.kBrake);
+        rightConfig.inverted(!Constants.CoralShooterConstants.LEFT_INVERTED).idleMode(IdleMode.kBrake);
         rightConfig.encoder.positionConversionFactor(420).velocityConversionFactor(420);
         rightConfig.closedLoopRampRate(CoralShooterConstants.RAMP_RATE);
         

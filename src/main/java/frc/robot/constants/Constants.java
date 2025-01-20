@@ -42,7 +42,7 @@ public class Constants {
         public static final int ELEVATOR_LEFT = 2;
         public static final int ELEVATOR_RIGHT = 3;
 
-        public static final boolean leftInverted = false;
+        public static final boolean LEFT_INVERTED = false;
 
         public static final double CORAL_STATION_ENCODER_TICKS = 0;
         public static final double L1_ENCODER_TICKS = 100;
@@ -57,7 +57,7 @@ public class Constants {
         public static final double MAX_ACCELERATION = 10.0;
         public static final double RAMP_RATE = 20.0;
 
-        public static final double ELEVATOR_TICKS_DEADBAND = 10;
+        public static final double ELEVATOR_TICKS_DEADBAND = 10.0;
 
     }
 
@@ -66,12 +66,35 @@ public class Constants {
         public static final int CORAL_LEFT = 17;
         public static final int CORAL_RIGHT = 18;
 
-        public static final boolean leftInverted = false;
+        public static final boolean LEFT_INVERTED = false;
 
         public static final double RAMP_RATE = 20.0;
 
         public static final int CORAL_BEAM_ID = 1;
         public static final int CORAL_BEAM_SENSOR_ID = 2;
+
+    }
+
+    public static class AlgaeClawConstants {
+
+        public static final int ALGAE_CLAW_ID = 4;
+        public static final int ALGAE_PIVOT_ID = 5;
+
+        public static final boolean CLAW_INVERTED = false; 
+        public static final boolean PIVOT_INVERTED = false; 
+
+        public static final double[] PIVOT_PID = {0.5, 0, 0, 0.5}; // kP, kI, kD, kF
+        // TODO preset PID stuff!
+
+
+        public static final double RAMP_RATE = 20.0;
+
+        // TODO figure this out too
+        public static final double PIVOT_IN_TICKS = 0.0;
+        public static final double PIVOT_OUT_TICKS = 0.0;
+        public static final double PIVOT_TICKS_DEADBAND = 10.0;
+
+        public static final double CURRENT_MAX = 30.0; // TEST
 
     }
 

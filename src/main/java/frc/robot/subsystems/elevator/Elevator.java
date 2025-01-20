@@ -31,7 +31,7 @@ public class Elevator extends SubsystemBase {
         this.rightMotor = new SparkMax(Constants.ElevatorConstants.ELEVATOR_RIGHT, MotorType.kBrushless);
 
         SparkMaxConfig leftConfig = new SparkMaxConfig();
-        leftConfig.inverted(Constants.ElevatorConstants.leftInverted).idleMode(IdleMode.kBrake);
+        leftConfig.inverted(Constants.ElevatorConstants.LEFT_INVERTED).idleMode(IdleMode.kBrake);
         leftConfig.encoder.positionConversionFactor(420).velocityConversionFactor(420);
         leftConfig.closedLoop.pid(
             Constants.ElevatorConstants.ELEVATOR_PID[0],

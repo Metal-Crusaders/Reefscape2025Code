@@ -1,10 +1,7 @@
 package frc.robot.constants;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MathUtils {
 
@@ -20,7 +17,6 @@ public class MathUtils {
         if (current == null) {
             return null;
         }
-        SmartDashboard.putString("Pose To String", current.toString());
         if (targets == null) {
             throw new IllegalArgumentException("Target list cannot be null or empty.");
         }
