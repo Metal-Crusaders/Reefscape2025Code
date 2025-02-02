@@ -51,6 +51,20 @@ public class Constants {
         public static final double ROTATION_PP_KP = 2.5;
         public static final double ROTATION_PP_KI = 0.0;
         public static final double ROTATION_PP_KD = 0.0;
+
+        public static final double CLOSE_TRANSLATION_PP_KP = 3.0;
+        public static final double CLOSE_TRANSLATION_PP_KI = 0.0;
+        public static final double CLOSE_TRANSLATION_PP_KD = 0.0;
+
+        public static final double CLOSE_ROTATION_PP_KP = 2.0;
+        public static final double CLOSE_ROTATION_PP_KI = 0.0;
+        public static final double CLOSE_ROTATION_PP_KD = 0.0;
+
+        public static final double MAX_LINEAR_VELOCITY = 2.0;
+        public static final double MAX_LINEAR_ACCELERATION = 1.5;
+        public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
+        public static final double MAX_ANGULAR_ACCELERATION = 4 * Math.PI;
+
     }
 
     public static class AutoDriveConstants {

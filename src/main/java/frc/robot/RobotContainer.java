@@ -9,6 +9,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,6 +23,7 @@ import frc.robot.commands.scoring.coral.ScoreCoralL1;
 import frc.robot.commands.swerve.DriveToClosestReef;
 import frc.robot.commands.swerve.AutoDriveProcessor;
 import frc.robot.commands.swerve.AutoLineUpReef;
+import frc.robot.commands.swerve.CloseDriveToPose;
 import frc.robot.commands.swerve.SwerveTeleop;
 import frc.robot.commands.utils.JoystickInterruptible;
 import frc.robot.constants.Constants;
@@ -118,7 +120,7 @@ public class RobotContainer {
         driverController.leftBumper().whileTrue(leftCoralAutoDrive);
         driverController.rightBumper().whileTrue(rightCoralAutoDrive);
         driverController.leftStick().whileTrue(reefAutoDrive);
-        // driverController.rightStick().onTrue(processorAutoDrive);
+        driverController.rightStick().onTrue(processorAutoDrive);
 
         drivetrain.setDefaultCommand(swerveTeleop);
 

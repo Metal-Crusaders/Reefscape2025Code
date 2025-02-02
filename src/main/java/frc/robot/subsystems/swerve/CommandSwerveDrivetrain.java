@@ -55,6 +55,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /** Swerve request to apply during robot-centric path following */
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
+    private final PathConstraints constraints = new PathConstraints(Constants.SwerveConstants.MAX_LINEAR_VELOCITY, Constants.SwerveConstants.MAX_LINEAR_ACCELERATION, Constants.SwerveConstants.MAX_ANGULAR_VELOCITY, Constants.SwerveConstants.MAX_ANGULAR_ACCELERATION);
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
@@ -261,7 +262,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
      public Command driveToPose(double goX, double goY, double heading) {
         Pose2d endPose = new Pose2d(goX, goY, new Rotation2d(heading * Math.PI / 180.0));
-        PathConstraints constraints = new PathConstraints(2.0, 1.5, 2 * Math.PI, 4 * Math.PI);
 
         Command pathfindingCommand = AutoBuilder.pathfindToPose(
             endPose,

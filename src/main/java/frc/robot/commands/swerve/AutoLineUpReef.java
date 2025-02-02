@@ -23,8 +23,8 @@ public class AutoLineUpReef extends SequentialCommandGroup {
         addCommands(
             new DeferredCommand(
                 () -> (new ConditionalAllianceCommand(
-                    this.swerve.driveToPose(addRCtoFC(MathUtils.findClosestTarget(this.swerve.getState().Pose, Constants.AutoDriveConstants.BLUE_REEF_POSES), right)),
-                    this.swerve.driveToPose(addRCtoFC(MathUtils.findClosestTarget(this.swerve.getState().Pose, Constants.AutoDriveConstants.RED_REEF_POSES), right))
+                    new CloseDriveToPose(swerve, addRCtoFC(MathUtils.findClosestTarget(this.swerve.getState().Pose, Constants.AutoDriveConstants.BLUE_REEF_POSES), right)),
+                    new CloseDriveToPose(swerve, addRCtoFC(MathUtils.findClosestTarget(this.swerve.getState().Pose, Constants.AutoDriveConstants.RED_REEF_POSES), right))
                 )),
                 getRequirements()
             )
@@ -38,8 +38,6 @@ public class AutoLineUpReef extends SequentialCommandGroup {
         double newX = robotPose.getX() + (xOffset * Math.cos(robotPose.getRotation().getRadians()) - yOffset * Math.sin(robotPose.getRotation().getRadians()));
         double newY = robotPose.getY() + (xOffset * Math.sin(robotPose.getRotation().getRadians()) + yOffset * Math.cos(robotPose.getRotation().getRadians()));
         Pose2d calculated = new Pose2d(newX, newY, robotPose.getRotation());
-        SmartDashboard.putString("Current Pose", robotPose.toString());
-        SmartDashboard.putString("Calculated Offset Pose", calculated.toString());
         return calculated;
     }
 
