@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.CoralShooterConstants;
@@ -68,6 +69,11 @@ public class CoralShooter extends SubsystemBase {
 
     public boolean beamExists() {
         return beamSensor.get();
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putBoolean("BEAM EXISTS CORAL SHOOTER", this.beamExists());
     }
 
 }

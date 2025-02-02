@@ -116,7 +116,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     );
 
     /* The SysId routine to test */
-    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
+    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -133,7 +133,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, modules);
-        configureAutoBuilder();
+        configureAutoAndVision();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -158,7 +158,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
-        configureAutoBuilder();
+        configureAutoAndVision();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -191,13 +191,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
-        configureAutoBuilder();
+        configureAutoAndVision();
         if (Utils.isSimulation()) {
             startSimThread();
         }
     }
 
-    private void configureAutoBuilder() {
+    private void configureAutoAndVision() {
+
+        // poseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getState().RawHeading, getState().ModulePositions, getState().Pose);
+
         try {
             var config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
@@ -212,9 +215,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 ),
                 new PPHolonomicDriveController(
                     // PID constants for translation
-                    new PIDConstants(Constants.SwerveConstants.TRANSLATION_PP_PID[0], Constants.SwerveConstants.TRANSLATION_PP_PID[1], Constants.SwerveConstants.TRANSLATION_PP_PID[2]),
+                    new PIDConstants(Constants.SwerveConstants.TRANSLATION_PP_KP, Constants.SwerveConstants.TRANSLATION_PP_KI, Constants.SwerveConstants.TRANSLATION_PP_KD),
                     // PID constants for rotation
-                    new PIDConstants(Constants.SwerveConstants.ROTATION_PP_PID[0], Constants.SwerveConstants.ROTATION_PP_PID[1], Constants.SwerveConstants.ROTATION_PP_PID[2])
+                    new PIDConstants(Constants.SwerveConstants.ROTATION_PP_KP, Constants.SwerveConstants.ROTATION_PP_KI, Constants.SwerveConstants.ROTATION_PP_KD)
                 ),
                 config,
                 // Assume the path needs to be flipped for Red vs Blue, this is normally the case
@@ -241,9 +244,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 ),
                 new PPHolonomicDriveController(
                     // PID constants for translation
-                    new PIDConstants(Constants.SwerveConstants.TRANSLATION_PP_PID[0], Constants.SwerveConstants.TRANSLATION_PP_PID[1], Constants.SwerveConstants.TRANSLATION_PP_PID[2]),
+                    new PIDConstants(Constants.SwerveConstants.TRANSLATION_PP_KP, Constants.SwerveConstants.TRANSLATION_PP_KI, Constants.SwerveConstants.TRANSLATION_PP_KD),
                     // PID constants for rotation
-                    new PIDConstants(Constants.SwerveConstants.ROTATION_PP_PID[0], Constants.SwerveConstants.ROTATION_PP_PID[1], Constants.SwerveConstants.ROTATION_PP_PID[2])
+                    new PIDConstants(Constants.SwerveConstants.ROTATION_PP_KP, Constants.SwerveConstants.ROTATION_PP_KI, Constants.SwerveConstants.ROTATION_PP_KD)
                 ),
                 config,
                 // Assume the path needs to be flipped for Red vs Blue, this is normally the case
@@ -258,7 +261,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
      public Command driveToPose(double goX, double goY, double heading) {
         Pose2d endPose = new Pose2d(goX, goY, new Rotation2d(heading * Math.PI / 180.0));
-        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+        PathConstraints constraints = new PathConstraints(2.0, 1.5, 2 * Math.PI, 4 * Math.PI);
 
         Command pathfindingCommand = AutoBuilder.pathfindToPose(
             endPose,
@@ -270,7 +273,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      }
 
      public Command driveToPose(Pose2d endPose) {
-        PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+        PathConstraints constraints = new PathConstraints(2.0, 1.5, 2 * Math.PI, 4 * Math.PI);
 
         Command pathfindingCommand = AutoBuilder.pathfindToPose(
             endPose,
@@ -322,6 +325,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          * Otherwise, only check and apply the operator perspective if the DS is disabled.
          * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
          */
+
+        // poseEstimator.update(getState().RawHeading, getState().ModulePositions);
+
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
@@ -332,6 +338,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        
+        
     }
 
     private void startSimThread() {
@@ -348,4 +357,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
+
+    // @Override
+    // public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+    //     poseEstimator.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
+    // }
+
+    // add
+
 }

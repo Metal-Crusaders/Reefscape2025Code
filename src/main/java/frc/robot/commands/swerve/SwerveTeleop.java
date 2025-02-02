@@ -69,23 +69,23 @@ public class SwerveTeleop extends Command {
 
         // Determine if snapping to an angle is requested
         targetAngle = getSnapTargetAngle(rotation);
-        if (targetAngle == 1e9) {
-            targetAngle = prevTargetAngle;
-        }
-        if (targetAngle != -1) {
-            // Use PID to interpolate rotational rate
-            double currentAngle = drivetrain.getState().Pose.getRotation().getRadians();
+        // if (targetAngle == 1e9) {
+        //     targetAngle = prevTargetAngle;
+        // }
+        // if (targetAngle != -1) {
+        //     // Use PID to interpolate rotational rate
+        //     double currentAngle = drivetrain.getState().Pose.getRotation().getRadians();
 
-            // Calculate the shortest path to the target angle
-            double angleDifference = targetAngle - currentAngle;
-            angleDifference = Math.IEEEremainder(angleDifference, 2 * Math.PI); // Normalize to [-pi, pi]
+        //     // Calculate the shortest path to the target angle
+        //     double angleDifference = targetAngle - currentAngle;
+        //     angleDifference = Math.IEEEremainder(angleDifference, 2 * Math.PI); // Normalize to [-pi, pi]
 
-            // Update PID controller with the shortest path
-            rotation = rotationPID.calculate(currentAngle, currentAngle + angleDifference);
+        //     // Update PID controller with the shortest path
+        //     rotation = rotationPID.calculate(currentAngle, currentAngle + angleDifference);
 
-            // Clamp the rotation rate to the max allowable speed
-            rotation = Math.max(-MAX_ROTATION_SPEED, Math.min(MAX_ROTATION_SPEED, rotation));
-        }
+        //     // Clamp the rotation rate to the max allowable speed
+        //     rotation = Math.max(-MAX_ROTATION_SPEED, Math.min(MAX_ROTATION_SPEED, rotation));
+        // }
 
         // Create a field-centric swerve request
         SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric()

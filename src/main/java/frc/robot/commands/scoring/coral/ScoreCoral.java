@@ -7,7 +7,7 @@ public class ScoreCoral extends Command {
 
     private CoralShooter coralShooter;
 
-    private final double SHOOT_SPEED = 0.5;
+    private final double SHOOT_SPEED = 0.75;
 
     public ScoreCoral(CoralShooter coralShooter) {
 

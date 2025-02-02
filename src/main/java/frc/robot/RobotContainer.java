@@ -20,13 +20,14 @@ import frc.robot.commands.scoring.coral.IntakeCoral;
 import frc.robot.commands.scoring.coral.ScoreCoral;
 import frc.robot.commands.scoring.coral.ScoreCoralL1;
 import frc.robot.commands.swerve.DriveToClosestReef;
-import frc.robot.commands.swerve.AutoDriveCoralLeft;
-import frc.robot.commands.swerve.AutoDriveCoralRight;
 import frc.robot.commands.swerve.AutoDriveProcessor;
+import frc.robot.commands.swerve.AutoLineUpReef;
 import frc.robot.commands.swerve.SwerveTeleop;
 import frc.robot.commands.utils.JoystickInterruptible;
 import frc.robot.constants.Constants;
 import frc.robot.constants.TunerConstants;
+import frc.robot.constants.Constants.OIConstants;
+import frc.robot.oi.MyButton;
 import frc.robot.subsystems.camera.AprilTagCamera;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
@@ -45,32 +46,35 @@ public class RobotContainer {
     private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
         .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
+    // OI STUFF
     private final CommandXboxController driverController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
+    
+    // private final MyButton reefDriveBtn = new MyButton(driverController, OIConstants.XBOX_LEFT_STICK);
 
     // SUBSYSTEMS
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final SwerveTelemetry logger = new SwerveTelemetry(MaxSpeed);
 
-    // public final CoralShooter coralShooter = new CoralShooter();
+    public final CoralShooter coralShooter = new CoralShooter();
 
     // CAMERA STUFF // TODO UNCOMMENT THIS WHEN PHOTONVISION STUFF COMES OUT
-    // public AprilTagCamera camera = new AprilTagCamera(Constants.CameraConstants.CAMERA_1_NAME, Constants.CameraConstants.CAMERA_1_POS, drivetrain);
+    public AprilTagCamera camera = new AprilTagCamera(Constants.CameraConstants.CAMERA_1_NAME, Constants.CameraConstants.CAMERA_1_POS, drivetrain);
 
     // COMMANDS!!
 
     // drivetrain
 
     private final Command swerveTeleop = new SwerveTeleop(drivetrain, driverController);
-    private final Command leftCoralAutoDrive = new JoystickInterruptible(new AutoDriveCoralLeft(drivetrain), driverController, 0.5);
-    private final Command rightCoralAutoDrive = new JoystickInterruptible(new AutoDriveCoralRight(drivetrain), driverController, 0.5);
+    private final Command leftCoralAutoDrive = new JoystickInterruptible(new AutoLineUpReef(drivetrain, 0), driverController, 0.5);
+    private final Command rightCoralAutoDrive = new JoystickInterruptible(new AutoLineUpReef(drivetrain, 1), driverController, 0.5);
     private final Command processorAutoDrive = new JoystickInterruptible(new AutoDriveProcessor(drivetrain), driverController, 0.5);
     private final Command reefAutoDrive = new JoystickInterruptible(new DriveToClosestReef(drivetrain), driverController, 0.5);
 
     // shooting test
-    // private final Command intakeCoral = new IntakeCoral(coralShooter);
-    // private final Command scoreCoral = new ScoreCoral(coralShooter);
-    // private final Command scoreCoralL1 = new ScoreCoralL1(coralShooter);
+    private final Command intakeCoral = new IntakeCoral(coralShooter);
+    private final Command scoreCoral = new ScoreCoral(coralShooter);
+    private final Command scoreCoralL1 = new ScoreCoralL1(coralShooter);
 
     // autonomous
     private final Command testPathAuto = new TestPathAuto(drivetrain);
@@ -79,8 +83,8 @@ public class RobotContainer {
         // drivetrain.setDefaultCommand(
         //     // Drivetrain will execute this command periodically
         //     drivetrain.applyRequest(() ->
-        //         drive.withVelocityX(driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-        //             .withVelocityY(driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        //         drive.withVelocityX(-driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        //             .withVelocityY(-driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
         //             .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         //     )
         // );
@@ -111,10 +115,10 @@ public class RobotContainer {
         // operatorController.x().onTrue(scoreCoral);
         // operatorController.b().onTrue(scoreCoralL1);
 
-        driverController.leftBumper().onTrue(leftCoralAutoDrive);
-        driverController.rightBumper().onTrue(rightCoralAutoDrive);
-        driverController.leftStick().onTrue(reefAutoDrive);
-        driverController.rightStick().onTrue(processorAutoDrive);
+        driverController.leftBumper().whileTrue(leftCoralAutoDrive);
+        driverController.rightBumper().whileTrue(rightCoralAutoDrive);
+        driverController.leftStick().whileTrue(reefAutoDrive);
+        // driverController.rightStick().onTrue(processorAutoDrive);
 
         drivetrain.setDefaultCommand(swerveTeleop);
 

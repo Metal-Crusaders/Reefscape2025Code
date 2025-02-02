@@ -8,11 +8,49 @@ import edu.wpi.first.math.geometry.Translation3d;
 
 public class Constants {
 
+    public static class OIConstants {
+        public static int XBOX_A = 1;
+        public static int XBOX_B = 2;
+        public static int XBOX_X = 3;
+        public static int XBOX_Y = 4;
+        public static int XBOX_LB = 5;
+        public static int XBOX_RB = 6;
+        public static int XBOX_BACK = 7;
+        public static int XBOX_START = 8;
+        public static int XBOX_LEFT_STICK = 9;
+        public static int XBOX_RIGHT_STICK = 10;
+    }
+
     public static class SwerveConstants {
 
-        public static final double[] TRANSLATION_PP_PID = {10, 0, 0};
-        public static final double[] ROTATION_PP_PID = {7, 0, 0};
+        public static final double DRIVE_KP = 0.17105;
+        public static final double DRIVE_KI = 0.0;
+        public static final double DRIVE_KD = 0.0;
+        public static final double DRIVE_KS = 0.045286;
+        public static final double DRIVE_KV = 0.1141075;
+        public static final double DRIVE_KA = 0.005900075;
+        
+        public static final double TURNING_KP = 75.0;
+        public static final double TURNING_KI = 0.0;
+        public static final double TURNING_KD = 0.0;
+        public static final double TURNING_KS = 0.0;
+        public static final double TURNING_KV = 0.0;
+        public static final double TURNING_KA = 0.0;
 
+        public static final double ROTATION_KP = 0.0;
+        public static final double ROTATION_KI = 0.0;
+        public static final double ROTATION_KD = 0.0;
+        public static final double ROTATION_KS = 0.0;
+        public static final double ROTATION_KV = 0.0;
+        public static final double ROTATION_KA = 0.0;
+
+        public static final double TRANSLATION_PP_KP = 4.0;
+        public static final double TRANSLATION_PP_KI = 0.0;
+        public static final double TRANSLATION_PP_KD = 0.0;
+
+        public static final double ROTATION_PP_KP = 2.5;
+        public static final double ROTATION_PP_KI = 0.0;
+        public static final double ROTATION_PP_KD = 0.0;
     }
 
     public static class AutoDriveConstants {
@@ -21,8 +59,8 @@ public class Constants {
             new Pose2d(2.823, 4.000, new Rotation2d(0 * Math.PI / 180.0)),
             new Pose2d(3.719, 2.614, new Rotation2d(60 * Math.PI / 180.0)),
             new Pose2d(5.430, 2.640, new Rotation2d(120 * Math.PI / 180.0)),
-            new Pose2d(6.000, 4.000, new Rotation2d(180 * Math.PI / 180.0)),
-            new Pose2d(5.432, 5.132, new Rotation2d(-120 * Math.PI / 180.0)),
+            new Pose2d(6.131, 4.000, new Rotation2d(180 * Math.PI / 180.0)),
+            new Pose2d(5.384, 5.406, new Rotation2d(-120 * Math.PI / 180.0)),
             new Pose2d(3.689, 5.515, new Rotation2d(-60 * Math.PI / 180.0))
         };
 
@@ -31,8 +69,13 @@ public class Constants {
             new Pose2d(3.719 + 8.553921, 2.614, new Rotation2d(60 * Math.PI / 180.0)),
             new Pose2d(5.430 + 8.553921, 2.640, new Rotation2d(120 * Math.PI / 180.0)),
             new Pose2d(6.000 + 8.553921, 4.000, new Rotation2d(180 * Math.PI / 180.0)),
-            new Pose2d(5.432 + 8.553921, 5.132, new Rotation2d(-120 * Math.PI / 180.0)),
+            new Pose2d(5.384 + 8.553921, 5.406, new Rotation2d(-120 * Math.PI / 180.0)),
             new Pose2d(3.689 + 8.553921, 5.515, new Rotation2d(-60 * Math.PI / 180.0))
+        };
+
+        public static final double[][] ADDITIONS = {
+            {0.342, 0}, // LEFT ADDITION
+            {0.342, -0.348}  // RIGHT ADDITION
         };
 
     }
@@ -64,7 +107,7 @@ public class Constants {
     public static class CoralShooterConstants {
 
         public static final int CORAL_LEFT = 17;
-        public static final int CORAL_RIGHT = 18;
+        public static final int CORAL_RIGHT = 16;
 
         public static final boolean LEFT_INVERTED = false;
 
@@ -100,35 +143,11 @@ public class Constants {
 
     public static class CameraConstants {
 
-        public static class AprilTags {
-
-            // facing the field elements (or from the driver station for the stages)
-            public static final int RIGHT_BLUE_SOURCE = 1; 
-            public static final int LEFT_BLUE_SOURCE = 2;
-            public static final int RIGHT_RED_SPEAKER = 3;
-            public static final int MIDDLE_RED_SPEAKER = 4; // target
-            public static final int RED_AMP = 5; // target
-            public static final int BLUE_AMP = 6; // target
-            public static final int MIDDLE_BLUE_SPEAKER = 7; // target
-            public static final int LEFT_BLUE_SPEAKER = 8;
-            public static final int RIGHT_RED_SOURCE = 9;
-            public static final int LEFT_RED_SOURCE = 10;
-            public static final int STAGE_LEFT_RED_TRAP = 11;
-            public static final int STAGE_RIGHT_RED_TRAP = 12;
-            public static final int CENTER_STAGE_RED_TRAP = 13;
-            public static final int CENTER_STAGE_BLUE_TRAP = 14;
-            public static final int STAGE_LEFT_BLUE_TRAP = 15;
-            public static final int STAGE_RIGHT_BLUE_TRAP = 16;
-        
-            public AprilTags() {
-            }
-        }    
-
         public static final String CAMERA_1_NAME = "testCam";
 
         public static final Transform3d CAMERA_1_POS = new Transform3d(
-            new Translation3d(0, 0, 0), // forward from center, up from center, right from center
-            new Rotation3d(0, 0, 0) // 0 0 0 is facing forward, positive rotates that axis clockwise
+            new Translation3d(0.36, -0.051, 0), // forward from center, up from center, right from center
+            new Rotation3d(0, 10.0 * Math.PI / 180.0, 0) // 0 0 0 is facing forward, positive rotates that axis clockwise
         );
 
     }

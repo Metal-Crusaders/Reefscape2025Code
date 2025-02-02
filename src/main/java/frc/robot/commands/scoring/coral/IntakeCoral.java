@@ -7,7 +7,8 @@ public class IntakeCoral extends Command {
 
     private CoralShooter coralShooter;
 
-    private final double INTAKE_SPEED = 0.5;
+    private final double INTAKE_SPEED_LEFT = -0.4;
+    private final double INTAKE_SPEED_RIGHT = -0.2;
 
     public IntakeCoral(CoralShooter coralShooter) {
 
@@ -23,7 +24,7 @@ public class IntakeCoral extends Command {
 
     @Override
     public void execute() {
-        coralShooter.set(INTAKE_SPEED, INTAKE_SPEED);
+        coralShooter.set(INTAKE_SPEED_LEFT, INTAKE_SPEED_RIGHT);
     }
 
     @Override
