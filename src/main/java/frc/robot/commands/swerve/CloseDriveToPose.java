@@ -3,6 +3,7 @@ package frc.robot.commands.swerve;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
@@ -28,6 +29,8 @@ public class CloseDriveToPose extends Command {
         this.rotationPID = new PIDController(Constants.SwerveConstants.CLOSE_ROTATION_PP_KP, 
                                              Constants.SwerveConstants.CLOSE_ROTATION_PP_KI, 
                                              Constants.SwerveConstants.CLOSE_ROTATION_PP_KD);
+
+        this.rotationPID.enableContinuousInput(-1 * Math.PI, Math.PI);
         
         xTranslationPID.setTolerance(0.005);
         yTranslationPID.setTolerance(0.005);
@@ -56,6 +59,8 @@ public class CloseDriveToPose extends Command {
         double xSpeed = xTranslationPID.calculate(currentPose.getX());
         double ySpeed = yTranslationPID.calculate(currentPose.getY());
         double thetaSpeed = rotationPID.calculate(currentPose.getRotation().getRadians());
+
+        // SmartDashboard.putNumber("Current PID Setpoint", 0)
         
         ChassisSpeeds wheelSpeeds = new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed);
 

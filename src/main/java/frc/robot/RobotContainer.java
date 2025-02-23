@@ -17,7 +17,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.auto.TestPathAuto;
-import frc.robot.commands.scoring.coral.IntakeCoral;
+import frc.robot.commands.elevator.ElevatorPreset;
+import frc.robot.commands.elevator.ElevatorTeleop;
+import frc.robot.commands.scoring.algae.AlgaeClawTeleop;
+import frc.robot.commands.scoring.algae.AlgaePivotPreset;
+import frc.robot.commands.scoring.coral.IntakeCoralFull;
 import frc.robot.commands.scoring.coral.ScoreCoral;
 import frc.robot.commands.scoring.coral.ScoreCoralL1;
 import frc.robot.commands.swerve.DriveToClosestReef;
@@ -26,42 +30,39 @@ import frc.robot.commands.swerve.AutoLineUpReef;
 import frc.robot.commands.swerve.CloseDriveToPose;
 import frc.robot.commands.swerve.SwerveTeleop;
 import frc.robot.commands.utils.JoystickInterruptible;
+import frc.robot.commands.coroutines.*;
 import frc.robot.constants.Constants;
 import frc.robot.constants.TunerConstants;
+import frc.robot.constants.Constants.AlgaeClawConstants;
 import frc.robot.constants.Constants.OIConstants;
 import frc.robot.oi.MyButton;
 import frc.robot.subsystems.camera.AprilTagCamera;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.scoring.AlgaeClaw;
+import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.SwerveTelemetry;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
-    /* Setting up bindings for necessary control of the swerve drive platform */
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-    private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
-        .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     // OI STUFF
     private final CommandXboxController driverController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
-    
-    // private final MyButton reefDriveBtn = new MyButton(driverController, OIConstants.XBOX_LEFT_STICK);
 
     // SUBSYSTEMS
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final SwerveTelemetry logger = new SwerveTelemetry(MaxSpeed);
 
+    public final Elevator elevator = new Elevator();
     public final CoralShooter coralShooter = new CoralShooter();
+    public final AlgaeClaw algaeClaw = new AlgaeClaw();
+    public final AlgaePivot algaePivot = new AlgaePivot();
 
     // CAMERA STUFF // TODO UNCOMMENT THIS WHEN PHOTONVISION STUFF COMES OUT
-    public AprilTagCamera camera = new AprilTagCamera(Constants.CameraConstants.CAMERA_1_NAME, Constants.CameraConstants.CAMERA_1_POS, drivetrain);
+    public AprilTagCamera camera1 = new AprilTagCamera(Constants.CameraConstants.CAMERA_1_NAME, Constants.CameraConstants.CAMERA_1_POS, drivetrain);
+    public AprilTagCamera camera2 = new AprilTagCamera(Constants.CameraConstants.CAMERA_2_NAME, Constants.CameraConstants.CAMERA_2_POS, drivetrain);
 
     // COMMANDS!!
 
@@ -73,56 +74,57 @@ public class RobotContainer {
     private final Command processorAutoDrive = new JoystickInterruptible(new AutoDriveProcessor(drivetrain), driverController, 0.5);
     private final Command reefAutoDrive = new JoystickInterruptible(new DriveToClosestReef(drivetrain), driverController, 0.5);
 
-    // shooting test
-    private final Command intakeCoral = new IntakeCoral(coralShooter);
+    // elevator commands
+    // private final Command elevatorTeleop = new ElevatorTeleop(elevator, operatorController);
+    private final ElevatorPreset restMode = new ElevatorPreset(elevator, Constants.ElevatorConstants.L1_ENCODER_TICKS);
+    private final ElevatorPreset test1ElePreset = new ElevatorPreset(elevator, Constants.ElevatorConstants.HIGH_ALGAE_ENCODER_TICKS);
+
+    // coral shooter
+    private final Command intakeCoral = new IntakeCoralFull(coralShooter);
     private final Command scoreCoral = new ScoreCoral(coralShooter);
     private final Command scoreCoralL1 = new ScoreCoralL1(coralShooter);
 
+    // algae claw
+    private final Command algaeClawTeleop = new AlgaeClawTeleop(algaeClaw, operatorController);
+    private final Command algaeRestMode = new AlgaePivotPreset(algaePivot, AlgaeClawConstants.PIVOT_IN_TICKS);
+    private final Command algaeClawOut = new AlgaePivotPreset(algaePivot, AlgaeClawConstants.PIVOT_OUT_TICKS);
+
+    // coroutines
+    // write code for all coroutines under the coroutines folder here:
+    private final Command restModeCoroutine = new RestMode(elevator, algaePivot);
+    private final Command lowAlgaeGrabCoroutine = new LowAlgaeGrab(drivetrain, elevator, coralShooter, algaePivot, algaeClaw);
+    private final Command highAlgaeGrabCoroutine = new HighAlgaeGrab(drivetrain, elevator, coralShooter, algaePivot, algaeClaw);
+    private final Command highAlgaeGrabCoralFirstCoroutine = new HighAlgaeGrabCoralFirst(drivetrain, elevator, coralShooter, algaePivot, algaeClaw);
+    private final Command shootL1Coroutine = new ShootL1(drivetrain, elevator, coralShooter, algaePivot);
+    private final Command shootL2LeftCoroutine = new ShootL2(false, drivetrain, elevator, coralShooter, algaePivot);
+    private final Command shootL2RightCoroutine = new ShootL2(true, drivetrain, elevator, coralShooter, algaePivot);
+    private final Command shootL3LeftCoroutine = new ShootL3(false, drivetrain, elevator, coralShooter, algaePivot);
+    private final Command shootL3RightCoroutine = new ShootL3(false, drivetrain, elevator, coralShooter, algaePivot);
+    private final Command processAlgaeCoroutine = new ProcessAlgae(algaePivot, algaeClaw);
+
     // autonomous
-    private final Command testPathAuto = new TestPathAuto(drivetrain);
+    // private final Command testPathAuto = new TestPathAuto(drivetrain);
 
     private void configureBindings() {
-        // drivetrain.setDefaultCommand(
-        //     // Drivetrain will execute this command periodically
-        //     drivetrain.applyRequest(() ->
-        //         drive.withVelocityX(-driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-        //             .withVelocityY(-driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-        //             .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        //     )
-        // );
 
-        // driverController.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        // driverController.b().whileTrue(drivetrain.applyRequest(() ->
-        //     point.withModuleDirection(new Rotation2d(-driverController.getLeftY(), -driverController.getLeftX()))
-        // ));
-
-        // driverController.pov(0).whileTrue(drivetrain.applyRequest(() ->
-        //     forwardStraight.withVelocityX(0.5).withVelocityY(0))
-        // );
-        // driverController.pov(180).whileTrue(drivetrain.applyRequest(() ->
-        //     forwardStraight.withVelocityX(-0.5).withVelocityY(0))
-        // );
-
-        // // Run SysId routines when holding back/start and X/Y.
-        // // Note that each routine should be run exactly once in a single log.
-        // driverController.back().and(driverController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        // driverController.back().and(driverController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        // driverController.start().and(driverController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        // driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-        // // reset the field-centric heading on left bumper press
-        // driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-        // operatorController.a().onTrue(intakeCoral);
-        // operatorController.x().onTrue(scoreCoral);
+        operatorController.leftBumper().onTrue(intakeCoral);
+        operatorController.rightBumper().onTrue(shootL1Coroutine);
         // operatorController.b().onTrue(scoreCoralL1);
 
-        driverController.leftBumper().whileTrue(leftCoralAutoDrive);
-        driverController.rightBumper().whileTrue(rightCoralAutoDrive);
-        driverController.leftStick().whileTrue(reefAutoDrive);
-        driverController.rightStick().onTrue(processorAutoDrive);
+        // driverController.leftBumper().whileTrue(leftCoralAutoDrive);
+        // driverController.rightBumper().whileTrue(rightCoralAutoDrive);
+        driverController.x().whileTrue(reefAutoDrive);
+        driverController.b().onTrue(processorAutoDrive);
 
         drivetrain.setDefaultCommand(swerveTeleop);
+
+        // algaeClaw.setDefaultCommand(algaeClawTeleop);
+        // operatorController.x().onTrue(algaeClawOut);
+        // operatorController.b().onTrue(algaeRestMode);
+
+        // elevator.setDefaultCommand(elevatorTeleop);
+        // operatorController.y().onTrue(test1ElePreset);
+        // operatorController.a().onTrue(restMode);
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
@@ -132,6 +134,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return testPathAuto;
+        // return testPathAuto;
+        return null;
     }
 }

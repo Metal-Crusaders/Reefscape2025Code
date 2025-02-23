@@ -71,6 +71,16 @@ public class CoralShooter extends SubsystemBase {
         return beamSensor.get();
     }
 
+    public void resetEncoders() {
+        this.leftMotor.getEncoder().setPosition(0);
+        this.rightMotor.getEncoder().setPosition(0);
+    }
+
+    public double getAvgEncoderTicks() {
+        return (this.leftMotor.getEncoder().getPosition() + this.rightMotor.getEncoder().getPosition()) * 0.5;
+        
+    }
+
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("BEAM EXISTS CORAL SHOOTER", this.beamExists());

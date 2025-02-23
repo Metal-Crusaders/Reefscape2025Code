@@ -21,9 +21,9 @@ import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
-public class HighAlgaeGrab extends SequentialCommandGroup {
+public class HighAlgaeGrabCoralFirst extends SequentialCommandGroup {
     
-    public HighAlgaeGrab(CommandSwerveDrivetrain swerveDrivetrain, Elevator elevator, CoralShooter coralShooter, AlgaePivot algaePivot, AlgaeClaw algaeClaw) {
+    public HighAlgaeGrabCoralFirst(CommandSwerveDrivetrain swerveDrivetrain, Elevator elevator, CoralShooter coralShooter, AlgaePivot algaePivot, AlgaeClaw algaeClaw) {
 
         addRequirements(
             swerveDrivetrain,
@@ -35,23 +35,20 @@ public class HighAlgaeGrab extends SequentialCommandGroup {
 
         addCommands(
             new ParallelCommandGroup(
-                new CloseDriveToClosestReef(swerveDrivetrain),
-                new ElevatorPreset(elevator, Constants.ElevatorConstants.HIGH_ALGAE_ENCODER_TICKS),
-                new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS)
-            ),
-            new ParallelCommandGroup(
                 new AutoLineUpReef(swerveDrivetrain, 0),
+                new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS)
+            ),
+            new ScoreCoral(coralShooter),
+            new ElevatorPreset(elevator, Constants.ElevatorConstants.HIGH_ALGAE_ENCODER_TICKS),
+            new ParallelCommandGroup(
+                new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS),
                 new GrabAlgaeTime(algaeClaw, 2)
             ),
-            new CloseDriveToClosestReef(swerveDrivetrain),
-            new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS),
-            new AutoLineUpReef(swerveDrivetrain, 0),
-            new ScoreCoral(coralShooter),
+            new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_IN_ALGAE_TICKS),
             new ParallelCommandGroup(
                 new CloseDriveToClosestReef(swerveDrivetrain),
-                new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_IN_ALGAE_TICKS)
-            ),
-            new ElevatorPreset(elevator, Constants.ElevatorConstants.L1_ENCODER_TICKS)
+                new ElevatorPreset(elevator, Constants.ElevatorConstants.L1_ENCODER_TICKS)
+            )
         );
     }
 

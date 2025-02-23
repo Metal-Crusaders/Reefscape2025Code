@@ -34,9 +34,6 @@ public class ElevatorPreset extends Command {
 
     @Override
     public void execute() {
-        
-        SmartDashboard.putNumber("Elevator Encoder Ticks", elevator.getAvgEncoderTicks());
-        
     }
 
     @Override

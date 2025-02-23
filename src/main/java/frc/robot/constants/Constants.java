@@ -19,6 +19,9 @@ public class Constants {
         public static int XBOX_START = 8;
         public static int XBOX_LEFT_STICK = 9;
         public static int XBOX_RIGHT_STICK = 10;
+
+        public static int APAC1 = 4;
+        public static int APAC2 = 5;
     }
 
     public static class SwerveConstants {
@@ -44,7 +47,7 @@ public class Constants {
         public static final double ROTATION_KV = 0.0;
         public static final double ROTATION_KA = 0.0;
 
-        public static final double TRANSLATION_PP_KP = 4.0;
+        public static final double TRANSLATION_PP_KP = 4.5;
         public static final double TRANSLATION_PP_KI = 0.0;
         public static final double TRANSLATION_PP_KD = 0.0;
 
@@ -88,30 +91,33 @@ public class Constants {
         };
 
         public static final double[][] ADDITIONS = {
-            {0.342, 0}, // LEFT ADDITION
-            {0.342, -0.348}  // RIGHT ADDITION
+            {0.43, 0}, // LEFT ADDITION
+            {0.43, -0.348}  // RIGHT ADDITION
         };
 
     }
 
     public static class ElevatorConstants {
 
-        public static final int ELEVATOR_LEFT = 2;
-        public static final int ELEVATOR_RIGHT = 3;
+        public static final int ELEVATOR_LEFT = 17;
+        public static final int ELEVATOR_RIGHT = 18;
 
-        public static final boolean LEFT_INVERTED = false;
+        public static final boolean LEFT_INVERTED = true;
 
-        public static final double CORAL_STATION_ENCODER_TICKS = 0;
-        public static final double L1_ENCODER_TICKS = 100;
-        public static final double L2_ENCODER_TICKS = 200;
-        public static final double L3_ENCODER_TICKS = 300;
-        public static final double MAX_ENCODER_TICKS = 400; // TODO FIGURE THESE OUT
+        public static final double L1_ENCODER_TICKS = 0;
+        public static final double L2_ENCODER_TICKS = 13.8095;
+        public static final double L3_ENCODER_TICKS = 41.8095;
+        public static final double ALGAE_SPOKE_OFFSET = 27;
+        public static final double LOW_ALGAE_ENCODER_TICKS = L2_ENCODER_TICKS + ALGAE_SPOKE_OFFSET;
+        public static final double HIGH_ALGAE_ENCODER_TICKS = L3_ENCODER_TICKS + ALGAE_SPOKE_OFFSET;
+        public static final double MAX_ENCODER_TICKS = 68;
 
-        public static final double[] ELEVATOR_PID = {0.15, 0, 0, 0.5}; // kP, kI, kD, kF
+        public static final double[] ELEVATOR_PID = {0.1, 0, 0, 0.0}; // kP, kI, kD, kF
         // TODO FIGURE THE PID OUT TOO, using Cranberry Alarm's initial values for now
 
-        public static final double MAX_VELOCITY = 10.0;
-        public static final double MAX_ACCELERATION = 10.0;
+        public static final double MAX_PERCENT_SPEED = 0.25;
+        public static final double MAX_VELOCITY = 0.00005;
+        public static final double MAX_ACCELERATION = 2.0;
         public static final double RAMP_RATE = 20.0;
 
         public static final double ELEVATOR_TICKS_DEADBAND = 10.0;
@@ -120,48 +126,59 @@ public class Constants {
 
     public static class CoralShooterConstants {
 
-        public static final int CORAL_LEFT = 17;
-        public static final int CORAL_RIGHT = 16;
+        public static final int CORAL_LEFT = 13;
+        public static final int CORAL_RIGHT = 14;
 
-        public static final boolean LEFT_INVERTED = false;
+        public static final boolean LEFT_INVERTED = true;
 
         public static final double RAMP_RATE = 20.0;
 
-        public static final int CORAL_BEAM_ID = 1;
-        public static final int CORAL_BEAM_SENSOR_ID = 2;
+        public static final int CORAL_BEAM_ID = 4;
+        public static final int CORAL_BEAM_SENSOR_ID = 3;
 
     }
 
     public static class AlgaeClawConstants {
 
-        public static final int ALGAE_CLAW_ID = 4;
-        public static final int ALGAE_PIVOT_ID = 5;
+        public static final int ALGAE_CLAW_ID = 15;
+        public static final int ALGAE_PIVOT_ID = 16;
 
         public static final boolean CLAW_INVERTED = false; 
         public static final boolean PIVOT_INVERTED = false; 
 
-        public static final double[] PIVOT_PID = {0.5, 0, 0, 0.5}; // kP, kI, kD, kF
+        public static final double[] PIVOT_PID = {0.35 / 1000.0, 0, 0, 0.0}; // kP, kI, kD, kF
         // TODO preset PID stuff!
 
-
-        public static final double RAMP_RATE = 20.0;
-
         // TODO figure this out too
-        public static final double PIVOT_IN_TICKS = 0.0;
-        public static final double PIVOT_OUT_TICKS = 0.0;
-        public static final double PIVOT_TICKS_DEADBAND = 10.0;
+        public static final double PIVOT_IN_TICKS = 400.0;
+        public static final double PIVOT_IN_ALGAE_TICKS = 600.0;
+        public static final double PIVOT_OUT_TICKS = 1079.97725;
+        public static final double PIVOT_TICKS_DEADBAND = 50.0;
 
         public static final double CURRENT_MAX = 30.0; // TEST
+
+        public static final double MAX_VELOCITY = 210;
+        public static final double MAX_ACCELERATION = 105;
+        public static final double RAMP_RATE = 20.0;
 
     }
 
     public static class CameraConstants {
 
+        // CMAERA TO THE FARTHEST RIGHT, photonvision1.local at 10.52.93.11
         public static final String CAMERA_1_NAME = "testCam";
 
         public static final Transform3d CAMERA_1_POS = new Transform3d(
-            new Translation3d(0.36, -0.051, 0), // forward from center, up from center, right from center
-            new Rotation3d(0, 10.0 * Math.PI / 180.0, 0) // 0 0 0 is facing forward, positive rotates that axis clockwise
+            new Translation3d(0.2121027, 0.18034, -0.271145), // forward from center, up from center, right from center
+            new Rotation3d(0, 10.0 * Math.PI / 180.0, -45.0 * Math.PI / 180.0) // 0 0 0 is facing forward, positive rotates that axis clockwise
+        );
+
+        // CAMERA TO THE FARTHEST LEFT, photonvision2.local at 10.52.93.12
+        public static final String CAMERA_2_NAME = "testCam2";
+
+        public static final Transform3d CAMERA_2_POS = new Transform3d(
+            new Translation3d(0.280924, 0.18034, -0.219583), // forward from center, up from center, right from center
+            new Rotation3d(0, 10.0 * Math.PI / 180.0, 39.0 * Math.PI / 180.0) // 0 0 0 is facing forward, positive rotates that axis clockwise
         );
 
     }

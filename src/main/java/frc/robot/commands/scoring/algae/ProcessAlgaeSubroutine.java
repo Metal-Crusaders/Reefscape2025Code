@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.scoring.AlgaeClaw;
 
-public class ProcessAlgae extends Command {
+public class ProcessAlgaeSubroutine extends Command {
     
     private final AlgaeClaw claw;
     private final Timer timer;
@@ -12,7 +12,7 @@ public class ProcessAlgae extends Command {
     private final double CLAW_OUTTAKE_SPEED = -0.7;
     private final double TIMER_LENGTH = 0.5;
 
-    public ProcessAlgae(AlgaeClaw claw) {
+    public ProcessAlgaeSubroutine(AlgaeClaw claw) {
         this.claw = claw;
         this.timer = new Timer();
 

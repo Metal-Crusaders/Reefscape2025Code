@@ -20,17 +20,19 @@ public class AlgaeClawTeleop extends Command {
     @Override
     public void initialize() {
         claw.setClawMotor(0);
-        claw.setPivotMotor(0);
+        // claw.setPivotMotor(0);
     }
 
     @Override
     public void execute() {
 
         double clawSpeed = controller.getLeftY();
-        double pivotSpeed = controller.getRightY();
+        // double pivotSpeed = controller.getRightY();
 
-        claw.setClawMotor(clawSpeed);
-        claw.setPivotMotor(pivotSpeed);
+        claw.setClawMotor(clawSpeed * 0.5);
+        // claw.setPivotMotor(pivotSpeed * 0.05);
+
+        // SmartDashboard.putNumber("Algae Pivot Encoder Ticks", claw.getPivotEncoderTicks());
 
         SmartDashboard.putNumber("Algae Claw Current", claw.getClawMotor().getOutputCurrent()); // TODO use this to identify the current max for deadbanding
     }
@@ -43,7 +45,7 @@ public class AlgaeClawTeleop extends Command {
     @Override
     public void end(boolean interrupted) {
         claw.setClawMotor(0);
-        claw.setPivotMotor(0);
+        // claw.setPivotMotor(0);
     }
     
 }

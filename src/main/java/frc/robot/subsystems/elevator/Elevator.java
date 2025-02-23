@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.elevator;
 
+import java.util.spi.CurrencyNameProvider;
+
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -14,17 +16,27 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.wpilibj2.command.Command;
+
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ElevatorConstants;
 
 public class Elevator extends SubsystemBase {
 
     private SparkMax leftMotor, rightMotor;
+    private final SysIdRoutine sysIdRoutine;
     private double setpointTicks = 0.0; // Internal setpoint for the elevator position
     private TrapezoidProfile.State goalState;
     private TrapezoidProfile.State currentState;
+    private TrapezoidProfile profile;
+
+    private double prevUpdateTime = Timer.getFPGATimestamp();
 
     public Elevator() {
         this.leftMotor = new SparkMax(Constants.ElevatorConstants.ELEVATOR_LEFT, MotorType.kBrushless);
@@ -32,19 +44,22 @@ public class Elevator extends SubsystemBase {
 
         SparkMaxConfig leftConfig = new SparkMaxConfig();
         leftConfig.inverted(Constants.ElevatorConstants.LEFT_INVERTED).idleMode(IdleMode.kBrake);
-        leftConfig.encoder.positionConversionFactor(420).velocityConversionFactor(420);
         leftConfig.closedLoop.pid(
             Constants.ElevatorConstants.ELEVATOR_PID[0],
             Constants.ElevatorConstants.ELEVATOR_PID[1],
             Constants.ElevatorConstants.ELEVATOR_PID[2],
             ClosedLoopSlot.kSlot0
-        );
+        ).maxOutput(ElevatorConstants.MAX_PERCENT_SPEED)
+        .minOutput(-1 * ElevatorConstants.MAX_PERCENT_SPEED);
+        // leftConfig.closedLoop.maxMotion
+        //     .maxAcceleration(Constants.ElevatorConstants.MAX_ACCELERATION)
+        //     .maxVelocity(Constants.ElevatorConstants.MAX_VELOCITY)
+        //     .allowedClosedLoopError(0.1);
         leftConfig.closedLoopRampRate(ElevatorConstants.RAMP_RATE);
 
         SparkMaxConfig rightConfig = new SparkMaxConfig();
         rightConfig.idleMode(IdleMode.kBrake);
         rightConfig.closedLoopRampRate(ElevatorConstants.RAMP_RATE);
-        rightConfig.encoder.positionConversionFactor(420).velocityConversionFactor(420);
         rightConfig.follow(Constants.ElevatorConstants.ELEVATOR_LEFT, true); // Just clones the voltage so technically the above pid settings do nothing even if we set them here!
         leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         rightMotor.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -52,6 +67,24 @@ public class Elevator extends SubsystemBase {
         // Initialize TrapezoidProfile states
         currentState = new TrapezoidProfile.State(0, 0);
         goalState = new TrapezoidProfile.State(0, 0);
+
+        // Initialize SysIdRoutine
+        sysIdRoutine = new SysIdRoutine(
+            new SysIdRoutine.Config(), // Default config
+            new SysIdRoutine.Mechanism(
+                voltage -> leftMotor.setVoltage(voltage), // Apply voltage to motor
+                null, // No feedforward needed
+                this
+            )
+        );
+
+        profile = new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(ElevatorConstants.MAX_VELOCITY, ElevatorConstants.MAX_ACCELERATION)
+        );
+
+
+
+        resetEncoders();
     }
 
     // Basic motor methods
@@ -91,23 +124,35 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // Create a TrapezoidProfile to calculate the next setpoint
-        TrapezoidProfile profile = new TrapezoidProfile(
-            new TrapezoidProfile.Constraints(ElevatorConstants.MAX_VELOCITY, ElevatorConstants.MAX_ACCELERATION)
-        );
 
         this.goalState = new TrapezoidProfile.State(this.setpointTicks, 0);
 
         // Update the current state with the profile's next state
-        currentState = profile.calculate(0.02, goalState, currentState); // Assuming periodic runs every 20ms
+        currentState = profile.calculate(Timer.getFPGATimestamp() - prevUpdateTime, currentState, goalState); // Assuming periodic runs every 20ms
+
+        prevUpdateTime = Timer.getFPGATimestamp();
 
         // Use the updated position to move the elevator
         this.leftMotor.getClosedLoopController().setReference(
-            currentState.position,
+            goalState.position, // TESTING THIS
             ControlType.kPosition,
             ClosedLoopSlot.kSlot0,
-            ElevatorConstants.ELEVATOR_PID[4],
+            ElevatorConstants.ELEVATOR_PID[3],
             ArbFFUnits.kVoltage
         );
+
+        SmartDashboard.putNumber("Current State Ticks", currentState.position);
+        SmartDashboard.putNumber("Current State Velocity", currentState.velocity);
+        SmartDashboard.putNumber("Goal State Ticks", goalState.position);
+        SmartDashboard.putNumber("Current Ticks", this.getAvgEncoderTicks());
     }
+
+    public Command sysIdDynamic(Direction direction) {
+        return sysIdRoutine.dynamic(direction);
+    }
+
+    public Command sysIdQuasistatic(Direction direction) {
+        return sysIdRoutine.quasistatic(direction);
+    }
+
 }

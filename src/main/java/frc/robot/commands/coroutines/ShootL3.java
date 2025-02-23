@@ -1,19 +1,43 @@
 package frc.robot.commands.coroutines;
 
+import java.util.Set;
+
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.elevator.ElevatorPreset;
+import frc.robot.commands.scoring.coral.ScoreCoral;
+import frc.robot.commands.swerve.AutoLineUpReef;
+import frc.robot.commands.swerve.CloseDriveToClosestReef;
+import frc.robot.commands.swerve.CloseDriveToPose;
+import frc.robot.commands.utils.ConditionalAllianceCommand;
+import frc.robot.constants.Constants;
+import frc.robot.constants.MathUtils;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.scoring.AlgaeClaw;
+import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
 public class ShootL3 extends SequentialCommandGroup {
     
-    public ShootL3(boolean right, CommandSwerveDrivetrain swerveDrivetrain, Elevator elevator, CoralShooter coralShooter) {
+    public ShootL3(boolean right, CommandSwerveDrivetrain swerveDrivetrain, Elevator elevator, CoralShooter coralShooter, AlgaePivot pivot) {
+
+        addRequirements(
+            swerveDrivetrain,
+            elevator,
+            pivot,
+            coralShooter
+        );
 
         addCommands(
-            // drive up (use conditional here)
-            // raise elevator to correct height
-            // spit out coral
-            // return rest mode and back up at the same time
+            new AutoLineUpReef(swerveDrivetrain, (right ? 1 : 0)),
+            new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS),
+            new ScoreCoral(coralShooter),
+            new ParallelCommandGroup(
+                new RestMode(elevator, pivot),
+                new CloseDriveToClosestReef(swerveDrivetrain)
+            )
         );
 
     }
