@@ -1,14 +1,13 @@
 package frc.robot.commands.scoring.algae;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants.AlgaeClawConstants;
 import frc.robot.subsystems.scoring.AlgaeClaw;
 
 public class GrabAlgae extends Command {
 
     private final AlgaeClaw claw;
 
-    private final double CLAW_INTAKE_SPEED = 0.5;
+    private final double CLAW_INTAKE_SPEED = -0.3;
 
     public GrabAlgae(AlgaeClaw claw) {
         this.claw = claw;
@@ -30,7 +29,7 @@ public class GrabAlgae extends Command {
 
     @Override
     public boolean isFinished() {
-        return claw.getClawMotor().getOutputCurrent() >= AlgaeClawConstants.CURRENT_MAX;
+        return claw.holdingAlgae();
     }
 
     @Override

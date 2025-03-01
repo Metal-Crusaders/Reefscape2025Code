@@ -35,5 +35,28 @@ public class MathUtils {
         return closest;
     }
 
+    public static int findClosestIdx(Pose2d current, Pose2d[] targets) {
+        if (current == null) {
+            return 0;
+        }
+        if (targets == null) {
+            throw new IllegalArgumentException("Target list cannot be null or empty.");
+        }
+
+        int closest = 0;
+        double minDistance = Double.MAX_VALUE;
+
+        for (int i = 0; i < targets.length; i++) {
+            Pose2d target = targets[i];
+            double distance = current.getTranslation().getDistance(target.getTranslation());
+            if (distance <= minDistance) {
+                minDistance = distance;
+                closest = i;
+            }
+        }
+
+        return closest;
+    }
+
     
 }

@@ -1,4 +1,4 @@
-package frc.robot.commands.coroutines;
+package frc.robot.commands.coroutines.nodriver;
 
 import java.util.Set;
 
@@ -6,7 +6,11 @@ import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.coroutines.RestMode;
 import frc.robot.commands.elevator.ElevatorPreset;
+import frc.robot.commands.scoring.algae.AlgaePivotPreset;
+import frc.robot.commands.scoring.algae.GrabAlgae;
+import frc.robot.commands.scoring.algae.GrabAlgaeTime;
 import frc.robot.commands.scoring.coral.ScoreCoral;
 import frc.robot.commands.swerve.AutoLineUpReef;
 import frc.robot.commands.swerve.AutoLineUpReefUniversal;
@@ -22,31 +26,37 @@ import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
-public class ShootL3 extends SequentialCommandGroup {
+public class LowAlgaeGrabNoDriver extends SequentialCommandGroup {
     
-    public ShootL3(boolean right, CommandSwerveDrivetrain swerveDrivetrain, Elevator elevator, CoralShooter coralShooter, AlgaePivot pivot, AlgaeClaw claw, CommandXboxController driverController) {
+    public LowAlgaeGrabNoDriver(CommandSwerveDrivetrain swerveDrivetrain, Elevator elevator, CoralShooter coralShooter, AlgaePivot algaePivot, AlgaeClaw algaeClaw) {
 
         addRequirements(
             swerveDrivetrain,
             elevator,
-            pivot,
             coralShooter,
-            claw
+            algaeClaw,
+            algaePivot
         );
 
         addCommands(
-            new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
             new ParallelCommandGroup(
-                new SwerveTeleopShortTerm(swerveDrivetrain, driverController),
-                new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS)
+                new CloseDriveToClosestReef(swerveDrivetrain),
+                new ElevatorPreset(elevator, Constants.ElevatorConstants.LOW_ALGAE_ENCODER_TICKS),
+                new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS)
+            ),
+            new ParallelCommandGroup(
+                new AutoLineUpReefUniversal(swerveDrivetrain, 0),
+                new GrabAlgae(algaeClaw)
             ),
             new ScoreCoral(coralShooter),
             new ParallelCommandGroup(
-                new RestMode(elevator, pivot, claw),
-                new CloseDriveToClosestReef(swerveDrivetrain)
+                new GrabAlgaeTime(algaeClaw, 1),
+                new CloseDriveToClosestReef(swerveDrivetrain),
+                new RestMode(elevator, algaePivot, algaeClaw)
             )
         );
 
     }
 
 }
+

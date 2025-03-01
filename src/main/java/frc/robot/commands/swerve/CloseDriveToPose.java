@@ -32,9 +32,9 @@ public class CloseDriveToPose extends Command {
 
         this.rotationPID.enableContinuousInput(-1 * Math.PI, Math.PI);
         
-        xTranslationPID.setTolerance(0.005);
-        yTranslationPID.setTolerance(0.005);
-        rotationPID.setTolerance(0.1);
+        xTranslationPID.setTolerance(0.05);
+        yTranslationPID.setTolerance(0.05);
+        rotationPID.setTolerance(0.01);
         
         addRequirements(swerve);
     }
@@ -59,8 +59,6 @@ public class CloseDriveToPose extends Command {
         double xSpeed = xTranslationPID.calculate(currentPose.getX());
         double ySpeed = yTranslationPID.calculate(currentPose.getY());
         double thetaSpeed = rotationPID.calculate(currentPose.getRotation().getRadians());
-
-        // SmartDashboard.putNumber("Current PID Setpoint", 0)
         
         ChassisSpeeds wheelSpeeds = new ChassisSpeeds(xSpeed, ySpeed, thetaSpeed);
 

@@ -9,7 +9,7 @@ public class GrabAlgaeTime extends Command {
     private final AlgaeClaw claw;
     private final Timer timer = new Timer();
     
-    private final double CLAW_INTAKE_SPEED = 0.5;
+    private final double CLAW_INTAKE_SPEED = -0.3;
     private double seconds;
 
     public GrabAlgaeTime(AlgaeClaw claw, double seconds) {

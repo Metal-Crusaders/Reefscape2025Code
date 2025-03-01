@@ -9,7 +9,7 @@ public class ProcessAlgaeSubroutine extends Command {
     private final AlgaeClaw claw;
     private final Timer timer;
 
-    private final double CLAW_OUTTAKE_SPEED = -0.7;
+    private final double CLAW_OUTTAKE_SPEED = 0.7;
     private final double TIMER_LENGTH = 0.5;
 
     public ProcessAlgaeSubroutine(AlgaeClaw claw) {

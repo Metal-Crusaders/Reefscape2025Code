@@ -18,13 +18,17 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
+import com.revrobotics.ColorSensorV3;
+import edu.wpi.first.wpilibj.I2C;
+
 public class AlgaeClaw extends SubsystemBase {
 
-    private static final double PULSE_FREQUENCY = 2;
-    private static final double PULSE_TIME = 0.3;
-    private static final double PULSE_SPEED = 0.3;
+    private static final double PULSE_FREQUENCY = 1;
+    private static final double PULSE_TIME = 0.2;
+    private static final double PULSE_SPEED = -0.4;
     
     private final SparkMax clawMotor;
+    private final ColorSensorV3 colorSensor;
     private final Timer timer;
 
     public AlgaeClaw() {
@@ -36,6 +40,8 @@ public class AlgaeClaw extends SubsystemBase {
         clawConfig.closedLoopRampRate(Constants.AlgaeClawConstants.RAMP_RATE);
         
         clawMotor.configure(clawConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
         this.timer = new Timer();
         this.timer.reset();
@@ -50,11 +56,18 @@ public class AlgaeClaw extends SubsystemBase {
         this.clawMotor.set(percentSpeed);
     }
 
+    public boolean holdingAlgae() {
+        return this.colorSensor.getProximity() > Constants.AlgaeClawConstants.PROXIMITY_THRESHOLD;
+    }
+
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Claw Motor Speed", clawMotor.get());
+        SmartDashboard.putNumber("Color Sensor Proximity", this.colorSensor.getProximity());
+        SmartDashboard.putNumber("Color Sensor Blue", this.colorSensor.getBlue());
+        SmartDashboard.putNumber("Color Sensor Test", this.colorSensor.getRed());
 
-        if (this.timer.hasElapsed(PULSE_FREQUENCY) && this.getClawMotor().get() == 0.0) {
+        if (this.timer.hasElapsed(PULSE_FREQUENCY) && this.getClawMotor().get() == 0.0 && this.holdingAlgae()) {
             CommandScheduler.getInstance().schedule(new InstantCommand(() -> {
                 this.clawMotor.set(PULSE_SPEED);
                 Timer.delay(PULSE_TIME);

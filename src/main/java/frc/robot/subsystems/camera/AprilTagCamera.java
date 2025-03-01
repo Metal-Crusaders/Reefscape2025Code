@@ -30,7 +30,7 @@ public class AprilTagCamera extends SubsystemBase {
 
     public AprilTagCamera(String cameraName, Transform3d robotToCamera, CommandSwerveDrivetrain drivetrain) {
         this.camera = new PhotonCamera(cameraName);
-		aprilTagFieldLayout = AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
+        aprilTagFieldLayout = AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
         aprilTagFieldLayout.setOrigin(AprilTagFieldLayout.OriginPosition.kBlueAllianceWallRightSide);
         this.poseEstimator = new PhotonPoseEstimator(
                 aprilTagFieldLayout,

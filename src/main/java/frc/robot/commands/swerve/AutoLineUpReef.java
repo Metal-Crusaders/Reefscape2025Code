@@ -23,22 +23,23 @@ public class AutoLineUpReef extends SequentialCommandGroup {
         addCommands(
             new DeferredCommand(
                 () -> (new ConditionalAllianceCommand(
-                    new CloseDriveToPose(swerve, addRCtoFC(MathUtils.findClosestTarget(this.swerve.getState().Pose, Constants.AutoDriveConstants.BLUE_REEF_POSES), right)),
-                    new CloseDriveToPose(swerve, addRCtoFC(MathUtils.findClosestTarget(this.swerve.getState().Pose, Constants.AutoDriveConstants.RED_REEF_POSES), right))
+                    new CloseDriveToPose(swerve, Constants.AutoDriveConstants.BLUE_UNIQUE_POSES[MathUtils.findClosestIdx(this.swerve.getState().Pose, Constants.AutoDriveConstants.BLUE_REEF_POSES)][right]),
+                    new CloseDriveToPose(swerve, Constants.AutoDriveConstants.RED_UNIQUE_POSES[MathUtils.findClosestIdx(this.swerve.getState().Pose, Constants.AutoDriveConstants.RED_REEF_POSES)][right])
                 )),
                 getRequirements()
             )
         );
     }
 
-    public Pose2d addRCtoFC(Pose2d robotPose, int right) {
-        double xOffset = Constants.AutoDriveConstants.ADDITIONS[right][0];
-        double yOffset = Constants.AutoDriveConstants.ADDITIONS[right][1];
+    // ############ VERY VERY DEPRECATED CODE ############
+    // public Pose2d addRCtoFC(Pose2d robotPose, int right) {
+    //     double xOffset = Constants.AutoDriveConstants.ADDITIONS[right][0];
+    //     double yOffset = Constants.AutoDriveConstants.ADDITIONS[right][1];
 
-        double newX = robotPose.getX() + (xOffset * Math.cos(robotPose.getRotation().getRadians()) - yOffset * Math.sin(robotPose.getRotation().getRadians()));
-        double newY = robotPose.getY() + (xOffset * Math.sin(robotPose.getRotation().getRadians()) + yOffset * Math.cos(robotPose.getRotation().getRadians()));
-        Pose2d calculated = new Pose2d(newX, newY, robotPose.getRotation());
-        return calculated;
-    }
+    //     double newX = robotPose.getX() + (xOffset * Math.cos(robotPose.getRotation().getRadians()) - yOffset * Math.sin(robotPose.getRotation().getRadians()));
+    //     double newY = robotPose.getY() + (xOffset * Math.sin(robotPose.getRotation().getRadians()) + yOffset * Math.cos(robotPose.getRotation().getRadians()));
+    //     Pose2d calculated = new Pose2d(newX, newY, robotPose.getRotation());
+    //     return calculated;
+    // }
 
 }

@@ -1,4 +1,4 @@
-package frc.robot.commands.coroutines;
+package frc.robot.commands.coroutines.nodriver;
 
 import java.util.Set;
 
@@ -10,6 +10,7 @@ import frc.robot.subsystems.scoring.AlgaeClaw;
 import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
+import frc.robot.commands.coroutines.RestMode;
 import frc.robot.commands.scoring.coral.ScoreCoralL1;
 import frc.robot.commands.swerve.AutoLineUpReef;
 import frc.robot.commands.swerve.AutoLineUpReefUniversal;
@@ -18,9 +19,9 @@ import frc.robot.commands.utils.ConditionalAllianceCommand;
 import frc.robot.constants.Constants;
 import frc.robot.constants.MathUtils;
 
-public class ShootL1 extends SequentialCommandGroup {
+public class ShootL1NoDriver extends SequentialCommandGroup {
 
-    public ShootL1(CommandSwerveDrivetrain swerveDrivetrain, Elevator elevator, CoralShooter coralShooter, AlgaePivot pivot, AlgaeClaw claw) {
+    public ShootL1NoDriver(CommandSwerveDrivetrain swerveDrivetrain, Elevator elevator, CoralShooter coralShooter, AlgaePivot pivot, AlgaeClaw claw) {
 
         addRequirements(
             swerveDrivetrain,

@@ -12,12 +12,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class SwerveTeleop extends Command {
+public class SwerveTeleopShortTerm extends Command {
     private final CommandSwerveDrivetrain drivetrain;
     private final CommandXboxController controller;
 
-    private static final double MAX_TRANSLATION_SPEED = 3.0; // meters per second
-    private static final double MAX_ROTATION_SPEED = Math.PI; // radians per second
+    private static final double MAX_TRANSLATION_SPEED = 0.35; // meters per second
+    private static final double MAX_ROTATION_SPEED = Math.PI * 0.25; // radians per second
     private static final double DEADBAND = 0.15;
 
     private double targetAngle, prevTargetAngle = 0;
@@ -25,13 +25,13 @@ public class SwerveTeleop extends Command {
     // PID controller for rotational interpolation
     private final PIDController rotationPID;
 
-    public SwerveTeleop(CommandSwerveDrivetrain drivetrain, CommandXboxController controller) {
+    public SwerveTeleopShortTerm(CommandSwerveDrivetrain drivetrain, CommandXboxController controller) {
         this.drivetrain = drivetrain;
         this.controller = controller;
         
         // Initialize the PID controller for rotation
         // TODO CUSTOMIZE THIS!
-        rotationPID = new PIDController(5.0, 0.0, 0.2); // Tuned PID gains
+        rotationPID = new PIDController(2.0, 0.0, 0.2); // Tuned PID gains
         rotationPID.setTolerance(0.01); // Tolerance for stopping rotation
         rotationPID.setIntegratorRange(-Math.PI, Math.PI);
 
@@ -65,26 +65,6 @@ public class SwerveTeleop extends Command {
         translationY *= MAX_TRANSLATION_SPEED;
         rotation *= MAX_ROTATION_SPEED;
 
-        // Determine if snapping to an angle is requested
-        targetAngle = getSnapTargetAngle(rotation);
-        if (targetAngle == 1e9) {
-            targetAngle = prevTargetAngle;
-        }
-        if (targetAngle != -1) {
-            // Use PID to interpolate rotational rate
-            double currentAngle = drivetrain.getState().Pose.getRotation().getRadians();
-
-            // Calculate the shortest path to the target angle
-            double angleDifference = targetAngle - currentAngle;
-            angleDifference = Math.IEEEremainder(angleDifference, 2 * Math.PI); // Normalize to [-pi, pi]
-
-            // Update PID controller with the shortest path
-            rotation = rotationPID.calculate(currentAngle, currentAngle + angleDifference);
-
-            // Clamp the rotation rate to the max allowable speed
-            rotation = Math.max(-MAX_ROTATION_SPEED, Math.min(MAX_ROTATION_SPEED, rotation));
-        }
-
         // Create a field-centric swerve request
         SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric()
             .withVelocityX(translationX)
@@ -96,37 +76,13 @@ public class SwerveTeleop extends Command {
         // Update SmartDashboard for debugging
         SmartDashboard.putNumber("Target Angle", targetAngle);
         SmartDashboard.putNumber("Rotational Output", rotation);
+        SmartDashboard.putBoolean("Start Btn Slow Cmd", controller.x().getAsBoolean());
 
         prevTargetAngle = targetAngle;
         
     }
-
-    private double getSnapTargetAngle(double rotation) {
-        if (rotation != 0) {
-            return -1;
-        }
-        if (controller.y().getAsBoolean()) {
-            return MathUtils.findClosestTarget(
-                drivetrain.getState().Pose, 
-                (DriverStation.getAlliance().get().compareTo(DriverStation.Alliance.Blue) == 0) ?
-                Constants.AutoDriveConstants.BLUE_REEF_POSES : Constants.AutoDriveConstants.RED_REEF_POSES).getRotation().getRadians();
-        } else if (controller.b().getAsBoolean()) {
-            return MathUtils.findClosestTarget(
-                drivetrain.getState().Pose, 
-                (DriverStation.getAlliance().get().compareTo(DriverStation.Alliance.Blue) == 0) ?
-                Constants.AutoDriveConstants.BLUE_CORAL_STATION_POSES : Constants.AutoDriveConstants.RED_CORAL_STATION_POSES).getRotation().getRadians();
-        } else if (controller.x().getAsBoolean()) {
-            return ((DriverStation.getAlliance().get().compareTo(DriverStation.Alliance.Blue) == 0) ? -90 : 90) * Math.PI / 180.0;
-        }
-        return 1e9; // No snap requested
-    }
-
     @Override
     public void end(boolean interrupted) {
-        if (interrupted) {
-            prevTargetAngle = -1;
-        }
-
         // Stop the drivetrain
         drivetrain.setControl(new SwerveRequest.FieldCentric()
             .withVelocityX(0)
@@ -136,7 +92,7 @@ public class SwerveTeleop extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return controller.x().getAsBoolean();
     }
 
     private double applyDeadband(double value) {

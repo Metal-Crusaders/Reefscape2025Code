@@ -1,4 +1,4 @@
-package frc.robot.commands.coroutines;
+package frc.robot.commands.coroutines.nodriver;
 
 import java.util.Set;
 
@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.coroutines.RestMode;
 import frc.robot.commands.elevator.ElevatorPreset;
 import frc.robot.commands.scoring.coral.ScoreCoral;
 import frc.robot.commands.swerve.AutoLineUpReef;
@@ -22,9 +23,9 @@ import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
-public class ShootL3 extends SequentialCommandGroup {
+public class ShootL3NoDriver extends SequentialCommandGroup {
     
-    public ShootL3(boolean right, CommandSwerveDrivetrain swerveDrivetrain, Elevator elevator, CoralShooter coralShooter, AlgaePivot pivot, AlgaeClaw claw, CommandXboxController driverController) {
+    public ShootL3NoDriver(boolean right, CommandSwerveDrivetrain swerveDrivetrain, Elevator elevator, CoralShooter coralShooter, AlgaePivot pivot, AlgaeClaw claw) {
 
         addRequirements(
             swerveDrivetrain,
@@ -37,7 +38,6 @@ public class ShootL3 extends SequentialCommandGroup {
         addCommands(
             new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
             new ParallelCommandGroup(
-                new SwerveTeleopShortTerm(swerveDrivetrain, driverController),
                 new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS)
             ),
             new ScoreCoral(coralShooter),

@@ -78,7 +78,6 @@ public class CoralShooter extends SubsystemBase {
 
     public double getAvgEncoderTicks() {
         return (this.leftMotor.getEncoder().getPosition() + this.rightMotor.getEncoder().getPosition()) * 0.5;
-        
     }
 
     @Override
