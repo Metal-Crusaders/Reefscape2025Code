@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.elevator.ElevatorPreset;
 import frc.robot.commands.scoring.coral.ScoreCoral;
+import frc.robot.commands.swerve.CloseDriveToClosestReefGoodOffset;
 import frc.robot.commands.swerve.AutoLineUpReef;
 import frc.robot.commands.swerve.AutoLineUpReefUniversal;
 import frc.robot.commands.swerve.CloseDriveToClosestReef;
@@ -35,6 +36,7 @@ public class ShootL3 extends SequentialCommandGroup {
         );
 
         addCommands(
+            new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
             new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
             new ParallelCommandGroup(
                 new SwerveTeleopShortTerm(swerveDrivetrain, driverController),
@@ -43,7 +45,7 @@ public class ShootL3 extends SequentialCommandGroup {
             new ScoreCoral(coralShooter),
             new ParallelCommandGroup(
                 new RestMode(elevator, pivot, claw),
-                new CloseDriveToClosestReef(swerveDrivetrain)
+                new CloseDriveToClosestReefGoodOffset(swerveDrivetrain)
             )
         );
 

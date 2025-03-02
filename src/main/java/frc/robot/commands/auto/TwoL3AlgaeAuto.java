@@ -79,7 +79,7 @@ public class TwoL3AlgaeAuto extends SequentialCommandGroup {
             resetPose,
             new ParallelCommandGroup(
                 startToL3,
-                new IntakeCoralFull(coralShooter)                
+                new IntakeCoralFull(coralShooter)
             ),
             new LowAlgaeGrabNoDriver(swerve, elevator, coralShooter, algaePivot, algaeClaw), // low algae coroutine
             l3ToProcessor,

@@ -55,7 +55,7 @@ public class Constants {
         public static final double ROTATION_PP_KI = 0.0;
         public static final double ROTATION_PP_KD = 0.0;
 
-        public static final double CLOSE_TRANSLATION_PP_KP = 3.0;
+        public static final double CLOSE_TRANSLATION_PP_KP = 2.0;
         public static final double CLOSE_TRANSLATION_PP_KI = 0.0;
         public static final double CLOSE_TRANSLATION_PP_KD = 0.0;
 
@@ -72,25 +72,26 @@ public class Constants {
 
     public static class AutoDriveConstants {
 
-        public static final Pose2d[] BLUE_REEF_POSES = {
-            new Pose2d(2.862, 4.019, new Rotation2d(   0 * Math.PI / 180.0)),
-            new Pose2d(3.582, 2.641, new Rotation2d(  60 * Math.PI / 180.0)),
-            new Pose2d(5.337, 2.589, new Rotation2d( 120 * Math.PI / 180.0)),
-            new Pose2d(6.131, 4.000, new Rotation2d( 180 * Math.PI / 180.0)),
-            new Pose2d(5.443, 5.321, new Rotation2d(-120 * Math.PI / 180.0)),
-            new Pose2d(3.695, 5.481, new Rotation2d( -60 * Math.PI / 180.0))
+        // RED_REEF_POSES array for ID 6 through 11
+        public static final Pose2d[] RED_REEF_POSES = new Pose2d[] {
+            new Pose2d(13.917, 2.859, new Rotation2d(2.0943951023931957)), // ID 6
+            new Pose2d(14.49476434251882, 4.182964006546419, new Rotation2d(3.141592653589793)), // ID 7
+            new Pose2d(13.636158342518822, 5.344784006546417, new Rotation2d(-2.0943951023931957)), // ID 8
+            new Pose2d(12.200804, 5.182639999999999, new Rotation2d(-1.0471975511965979)), // ID 9
+            new Pose2d(11.623039657481177, 3.8586759934535824, new Rotation2d(0.0)), // ID 10
+            new Pose2d(12.481645657481177, 2.696855993453582, new Rotation2d(1.0471975511965974)) // ID 11
         };
 
-        public static final double RED_OFFSET = 8.58;
-
-        public static final Pose2d[] RED_REEF_POSES = {
-            new Pose2d(2.862 + RED_OFFSET, 4.019, new Rotation2d(   0 * Math.PI / 180.0)),
-            new Pose2d(3.582 + RED_OFFSET, 2.641, new Rotation2d(  60 * Math.PI / 180.0)),
-            new Pose2d(5.337 + RED_OFFSET, 2.589, new Rotation2d( 120 * Math.PI / 180.0)),
-            new Pose2d(6.131 + RED_OFFSET, 4.000, new Rotation2d( 180 * Math.PI / 180.0)),
-            new Pose2d(5.443 + RED_OFFSET, 5.321, new Rotation2d(-120 * Math.PI / 180.0)),
-            new Pose2d(3.695 + RED_OFFSET, 5.481, new Rotation2d( -60 * Math.PI / 180.0))
+        // BLUE_REEF_POSES array for ID 17 through 22
+        public static final Pose2d[] BLUE_REEF_POSES = new Pose2d[] {
+            new Pose2d(3.9121936574811764, 2.696855993453582, new Rotation2d(1.0471975511965974)), // ID 17
+            new Pose2d(3.0533336574811782, 3.8586759934535824, new Rotation2d(0.0)), // ID 18
+            new Pose2d(3.6313519999999997, 5.182639999999999, new Rotation2d(-1.0471975511965979)), // ID 19
+            new Pose2d(5.066452342518822, 5.344784006546417, new Rotation2d(-2.0943951023931957)), // ID 20
+            new Pose2d(5.925312342518822, 4.182964006546419, new Rotation2d(3.141592653589793)), // ID 21
+            new Pose2d(5.347293999999999, 2.859, new Rotation2d(2.0943951023931957)) // ID 22
         };
+
 
         public static final Pose2d[][] BLUE_UNIQUE_POSES = {
             {new Pose2d(3.317, 4.250, new Rotation2d(   0 * Math.PI / 180.0)), new Pose2d(3.317, 3.707, new Rotation2d(   0 * Math.PI / 180.0))},
@@ -101,13 +102,15 @@ public class Constants {
             {new Pose2d(3.857, 5.206, new Rotation2d( -60 * Math.PI / 180.0)), new Pose2d(3.507, 5.061, new Rotation2d( -60 * Math.PI / 180.0))}
         };
 
+        public static final double RED_OFFSET = 8.58;
+
         public static final Pose2d[][] RED_UNIQUE_POSES = {
-            {new Pose2d(3.117 + 8.553921, 4.050, new Rotation2d(   0 * Math.PI / 180.0)), new Pose2d(3.117 + 8.553921, 3.707, new Rotation2d(   0 * Math.PI / 180.0))},
-            {new Pose2d(3.842 + 8.553921, 2.857, new Rotation2d(  60 * Math.PI / 180.0)), new Pose2d(4.079 + 8.553921, 2.672, new Rotation2d(  60 * Math.PI / 180.0))},
-            {new Pose2d(5.106 + 8.553921, 2.803, new Rotation2d( 120 * Math.PI / 180.0)), new Pose2d(5.416 + 8.553921, 2.948, new Rotation2d( 120 * Math.PI / 180.0))},
-            {new Pose2d(5.850 + 8.553921, 3.705, new Rotation2d( 180 * Math.PI / 180.0)), new Pose2d(5.850 + 8.553921, 4.259, new Rotation2d( 180 * Math.PI / 180.0))},
-            {new Pose2d(5.224 + 8.553921, 5.148, new Rotation2d(-120 * Math.PI / 180.0)), new Pose2d(4.881 + 8.553921, 5.412, new Rotation2d(-120 * Math.PI / 180.0))},
-            {new Pose2d(3.857 + 8.553921, 5.206, new Rotation2d( -60 * Math.PI / 180.0)), new Pose2d(3.507 + 8.553921, 5.061, new Rotation2d( -60 * Math.PI / 180.0))}
+            {new Pose2d(3.117 + RED_OFFSET, 4.050, new Rotation2d(   0 * Math.PI / 180.0)), new Pose2d(3.117 + 8.553921, 3.707, new Rotation2d(   0 * Math.PI / 180.0))},
+            {new Pose2d(3.842 + RED_OFFSET, 2.857, new Rotation2d(  60 * Math.PI / 180.0)), new Pose2d(4.079 + 8.553921, 2.672, new Rotation2d(  60 * Math.PI / 180.0))},
+            {new Pose2d(5.106 + RED_OFFSET, 2.803, new Rotation2d( 120 * Math.PI / 180.0)), new Pose2d(5.416 + 8.553921, 2.948, new Rotation2d( 120 * Math.PI / 180.0))},
+            {new Pose2d(5.850 + RED_OFFSET, 3.705, new Rotation2d( 180 * Math.PI / 180.0)), new Pose2d(5.850 + 8.553921, 4.259, new Rotation2d( 180 * Math.PI / 180.0))},
+            {new Pose2d(5.224 + RED_OFFSET, 5.148, new Rotation2d(-120 * Math.PI / 180.0)), new Pose2d(4.881 + 8.553921, 5.412, new Rotation2d(-120 * Math.PI / 180.0))},
+            {new Pose2d(3.857 + RED_OFFSET, 5.206, new Rotation2d( -60 * Math.PI / 180.0)), new Pose2d(3.507 + 8.553921, 5.061, new Rotation2d( -60 * Math.PI / 180.0))}
         };
 
         public static final Pose2d[] BLUE_CORAL_STATION_POSES = {
@@ -121,8 +124,16 @@ public class Constants {
         };
 
         public static final double[][] ADDITIONS = {
-            {0.39, 0.1}, // LEFT ADDITION
-            {0.39, -0.248}  // RIGHT ADDITION
+            {0.4, 0.15}, // LEFT ADDITION
+            {0.4, -0.18}  // RIGHT ADDITION
+        };
+
+        public static final double[] POSE_ADDITION = {
+            -0.5, 0.5
+        };
+
+        public static final int[] GOOD_APRIL_TAGS = {
+            6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22
         };
 
     }
@@ -191,7 +202,7 @@ public class Constants {
         public static final double MAX_ACCELERATION = 105;
         public static final double RAMP_RATE = 20.0;
 
-        public static final double PROXIMITY_THRESHOLD = 110.0; // TODO tweak this
+        public static final double PROXIMITY_THRESHOLD = 120.0; // TODO tweak this
         // public static final double BLUE_THRESHOLD = 200.0; // TODO tweak this
 
     }

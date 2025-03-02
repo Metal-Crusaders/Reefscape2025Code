@@ -16,7 +16,7 @@ public class SwerveTeleopShortTerm extends Command {
     private final CommandSwerveDrivetrain drivetrain;
     private final CommandXboxController controller;
 
-    private static final double MAX_TRANSLATION_SPEED = 0.35; // meters per second
+    private static final double MAX_TRANSLATION_SPEED = 0.75; // meters per second
     private static final double MAX_ROTATION_SPEED = Math.PI * 0.25; // radians per second
     private static final double DEADBAND = 0.15;
 

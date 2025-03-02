@@ -1,4 +1,4 @@
-package frc.robot.commands.coroutines.nodriver;
+package frc.robot.commands.coroutines.extradriver;
 
 import java.util.Set;
 
@@ -9,10 +9,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.coroutines.RestMode;
 import frc.robot.commands.elevator.ElevatorPreset;
 import frc.robot.commands.scoring.coral.ScoreCoral;
-import frc.robot.commands.swerve.AutoLineUpReef;
 import frc.robot.commands.swerve.AutoLineUpReefUniversal;
 import frc.robot.commands.swerve.CloseDriveToClosestReef;
-import frc.robot.commands.swerve.CloseDriveToClosestReefGoodOffset;
 import frc.robot.commands.swerve.CloseDriveToPose;
 import frc.robot.commands.swerve.SwerveTeleopShortTerm;
 import frc.robot.commands.utils.ConditionalAllianceCommand;
@@ -24,9 +22,9 @@ import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
-public class ShootL3NoDriver extends SequentialCommandGroup {
+public class ShootL2ED extends SequentialCommandGroup {
     
-    public ShootL3NoDriver(boolean right, CommandSwerveDrivetrain swerveDrivetrain, Elevator elevator, CoralShooter coralShooter, AlgaePivot pivot, AlgaeClaw claw) {
+    public ShootL2ED(boolean right, CommandSwerveDrivetrain swerveDrivetrain, Elevator elevator, CoralShooter coralShooter, AlgaePivot pivot, AlgaeClaw claw, CommandXboxController driverController) {
 
         addRequirements(
             swerveDrivetrain,
@@ -37,10 +35,10 @@ public class ShootL3NoDriver extends SequentialCommandGroup {
         );
 
         addCommands(
-            new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
-            new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
+            // new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
             new ParallelCommandGroup(
-                new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS)
+                new SwerveTeleopShortTerm(swerveDrivetrain, driverController),
+                new ElevatorPreset(elevator, Constants.ElevatorConstants.L2_ENCODER_TICKS)
             ),
             new ScoreCoral(coralShooter),
             new ParallelCommandGroup(
