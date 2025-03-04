@@ -4,7 +4,9 @@ import java.util.Set;
 
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.coroutines.RestMode;
 import frc.robot.commands.elevator.ElevatorPreset;
@@ -38,7 +40,10 @@ public class ShootL3NoDriver extends SequentialCommandGroup {
 
         addCommands(
             new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
-            new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
+            new ParallelDeadlineGroup(
+                new WaitCommand(1.75),
+                new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0))
+            ),
             new ParallelCommandGroup(
                 new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS)
             ),

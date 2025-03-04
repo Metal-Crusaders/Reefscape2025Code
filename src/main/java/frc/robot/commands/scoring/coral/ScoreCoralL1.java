@@ -9,7 +9,7 @@ public class ScoreCoralL1 extends Command {
     private CoralShooter coralShooter;
 
     private final double SHOOT_SPEED_LEFT = 0.4;
-    private final double SHOOT_SECONDS = 0.5;
+    private final double SHOOT_SECONDS = 0.75;
     private final Timer timer;
     private final double SHOOT_SPEED_RIGHT = 0.15;
 

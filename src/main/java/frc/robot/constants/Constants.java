@@ -22,6 +22,9 @@ public class Constants {
 
         public static int APAC1 = 4;
         public static int APAC2 = 5;
+
+        public static double SCORE_DEBOUNCING_TIME = 0.3;
+        public static double REST_DEBOUNCING_TIME = 0.1;
     }
 
     public static class SwerveConstants {
@@ -55,11 +58,11 @@ public class Constants {
         public static final double ROTATION_PP_KI = 0.0;
         public static final double ROTATION_PP_KD = 0.0;
 
-        public static final double CLOSE_TRANSLATION_PP_KP = 2.0;
+        public static final double CLOSE_TRANSLATION_PP_KP = 1.5;
         public static final double CLOSE_TRANSLATION_PP_KI = 0.0;
         public static final double CLOSE_TRANSLATION_PP_KD = 0.0;
 
-        public static final double CLOSE_ROTATION_PP_KP = 3.0;
+        public static final double CLOSE_ROTATION_PP_KP = 2.0;
         public static final double CLOSE_ROTATION_PP_KI = 0.0;
         public static final double CLOSE_ROTATION_PP_KD = 0.0;
 
@@ -124,12 +127,12 @@ public class Constants {
         };
 
         public static final double[][] ADDITIONS = {
-            {0.4, 0.15}, // LEFT ADDITION
-            {0.4, -0.18}  // RIGHT ADDITION
+            {0.39, 0.21}, // LEFT ADDITION
+            {0.39, -0.18}  // RIGHT ADDITION
         };
 
         public static final double[] POSE_ADDITION = {
-            -0.5, 0.5
+            -1, 0.75
         };
 
         public static final int[] GOOD_APRIL_TAGS = {

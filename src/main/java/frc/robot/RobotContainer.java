@@ -43,6 +43,7 @@ import frc.robot.commands.swerve.SwerveTeleopShortTerm;
 import frc.robot.commands.utils.JoystickInterruptible;
 import frc.robot.commands.auto.TestAlgaeL3Auto;
 import frc.robot.commands.auto.TwoL3AlgaeAuto;
+import frc.robot.commands.auto.TwoL3NoAlgaeAuto;
 import frc.robot.commands.coroutines.*;
 import frc.robot.commands.coroutines.extradriver.HighAlgaeGrabCoralFirstED;
 import frc.robot.commands.coroutines.extradriver.HighAlgaeGrabED;
@@ -117,7 +118,7 @@ public class RobotContainer {
     private final Command lowAlgaeGrabCoroutine = new LowAlgaeGrab(drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
     private final Command highAlgaeGrabCoroutine = new HighAlgaeGrab(drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
     private final Command highAlgaeGrabCoralFirstCoroutine = new HighAlgaeGrabCoralFirstED(drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
-    private final Command shootL1Coroutine = new ShootL1(drivetrain, elevator, coralShooter, algaePivot, algaeClaw);
+    private final Command shootL1Coroutine = new ShootL1(drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
     private final Command shootL2LeftCoroutine = new ShootL2(false, drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
     private final Command shootL2RightCoroutine = new ShootL2(true, drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
     private final Command shootL3LeftCoroutine = new ShootL3(false, drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
@@ -163,64 +164,56 @@ public class RobotContainer {
 
         driverController.leftBumper().whileTrue(leftCoralAutoDrive);
         driverController.rightBumper().whileTrue(rightCoralAutoDrive);
-        driverController.a().whileTrue(new CloseDriveToClosestReef(drivetrain));
+        driverController.a().whileTrue(new CloseDriveToClosestReefGoodOffset(drivetrain));
         // driverController.x().whileTrue(reefAutoDrive);
         driverController.start().whileTrue(new InstantCommand(() -> drivetrain.resetRotation(new Rotation2d(0)), drivetrain));
         // driverController.b().onTrue(processorAutoDrive);
 
         // Operator Board Shenanigans!
-        operatorBoard.l3LeftButton.onTrue(new InstantCommand(() -> {
-            SmartDashboard.putString("Button Pressed", "L3 Left Button");
-            CommandScheduler.getInstance().schedule(shootL3LeftCoroutine);
-        }));
-        operatorBoard.l3RightButton.onTrue(new InstantCommand(() -> {
-            SmartDashboard.putString("Button Pressed", "L3 Right Button");
-            CommandScheduler.getInstance().schedule(shootL3RightCoroutine);
-        }));
-        operatorBoard.l2LeftButton.onTrue(new InstantCommand(() -> {
-            SmartDashboard.putString("Button Pressed", "L2 Left Button");
-            CommandScheduler.getInstance().schedule(shootL2LeftCoroutine);
-        }));
-        operatorBoard.l2RightButton.onTrue(new InstantCommand(() -> {
-            SmartDashboard.putString("Button Pressed", "L2 Right Button");
-            CommandScheduler.getInstance().schedule(shootL2RightCoroutine);
-        }));
-        operatorBoard.l1Button.onTrue(new InstantCommand(() -> {
-            SmartDashboard.putString("Button Pressed", "L1 Button");
-            CommandScheduler.getInstance().schedule(new ScoreCoralL1(coralShooter));
-        }));
-        operatorBoard.intakeButton.onTrue(new InstantCommand(() -> {
-            SmartDashboard.putString("Button Pressed", "Intake Button");
-            CommandScheduler.getInstance().schedule(intakeCoralCoroutine);
-        }));
-        operatorBoard.algaeHighButton.onTrue(new InstantCommand(() -> {
-            SmartDashboard.putString("Button Pressed", "Algae High Button");
-            CommandScheduler.getInstance().schedule(highAlgaeGrabCoroutine);
-        }));
-        operatorBoard.algaeLowButton.onTrue(new InstantCommand(() -> {
-            SmartDashboard.putString("Button Pressed", "Algae Low Button");
-            CommandScheduler.getInstance().schedule(lowAlgaeGrabCoroutine);
-        }));
-        operatorBoard.algaeProcessButton.onTrue(new InstantCommand(() -> {
-            SmartDashboard.putString("Button Pressed", "Algae Process Button");
-            CommandScheduler.getInstance().schedule(processAlgaeCoroutine);
-        }));
-        operatorBoard.restModeButton.onTrue(new InstantCommand(() -> {
-            SmartDashboard.putString("Button Pressed", "Rest Mode Button");
-            CommandScheduler.getInstance().schedule(restModeCoroutine);
-        }));
+        operatorBoard.l3LeftButton.debounce(Constants.OIConstants.SCORE_DEBOUNCING_TIME).onTrue(
+            shootL3LeftCoroutine
+        ).onFalse(restModeCoroutine);
+        operatorBoard.l3RightButton.debounce(Constants.OIConstants.SCORE_DEBOUNCING_TIME).onTrue(
+            shootL3RightCoroutine
+        ).onFalse(restModeCoroutine);
+        operatorBoard.l2LeftButton.debounce(Constants.OIConstants.SCORE_DEBOUNCING_TIME).onTrue(
+            shootL2LeftCoroutine
+        ).onFalse(restModeCoroutine);
+        operatorBoard.l2RightButton.debounce(Constants.OIConstants.SCORE_DEBOUNCING_TIME).onTrue(
+            shootL2RightCoroutine
+        ).onFalse(restModeCoroutine);
+        operatorBoard.l1Button.debounce(Constants.OIConstants.SCORE_DEBOUNCING_TIME).onTrue(
+            scoreCoralL1
+        ).onFalse(restModeCoroutine);
+        operatorBoard.intakeButton.debounce(Constants.OIConstants.SCORE_DEBOUNCING_TIME).onTrue(
+            intakeCoralCoroutine
+        );
+        operatorBoard.algaeHighButton.debounce(Constants.OIConstants.SCORE_DEBOUNCING_TIME).onTrue(
+            highAlgaeGrabCoroutine
+        ).onFalse(restModeCoroutine);
+        operatorBoard.algaeLowButton.debounce(Constants.OIConstants.SCORE_DEBOUNCING_TIME).onTrue(
+            lowAlgaeGrabCoroutine
+        ).onFalse(restModeCoroutine);
+        operatorBoard.algaeProcessButton.debounce(Constants.OIConstants.SCORE_DEBOUNCING_TIME).onTrue(
+            processAlgaeCoroutine
+        ).onFalse(restModeCoroutine);
+        operatorBoard.restModeButton.debounce(Constants.OIConstants.REST_DEBOUNCING_TIME).onTrue(
+            restModeCoroutine
+        );
     }
 
     private void initializeAutoCommands() {
         // auto commands
         final Command testL3Auto = new TestAlgaeL3Auto(drivetrain, elevator, coralShooter, algaeClaw, algaePivot);
         final Command twoL3AlgaeAuto = new TwoL3AlgaeAuto(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
+        final Command twoL3NoAlgaeAuto = new TwoL3NoAlgaeAuto(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
         
         // autoselector
         autoSelector = new SendableChooser<>();
         autoSelector.setDefaultOption("No Auto", new InstantCommand(() -> drivetrain.resetPose(drivetrain.getState().Pose), drivetrain));
         autoSelector.addOption("Test L3 + Grab Algae Auto", testL3Auto);
         autoSelector.addOption("Two L3 Algae Auto", twoL3AlgaeAuto);
+        autoSelector.addOption("Two L3 NO Algae Auto", twoL3AlgaeAuto);
         autoSelector.close();
         SmartDashboard.putData("Auto Selector", autoSelector);
         

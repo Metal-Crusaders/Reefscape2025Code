@@ -4,6 +4,7 @@ import java.util.Set;
 
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.elevator.ElevatorPreset;
@@ -22,6 +23,7 @@ import frc.robot.subsystems.scoring.AlgaeClaw;
 import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
+import frc.robot.commands.utils.WaitUntilB;
 
 public class ShootL3 extends SequentialCommandGroup {
     
@@ -37,7 +39,10 @@ public class ShootL3 extends SequentialCommandGroup {
 
         addCommands(
             new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
-            new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
+            new ParallelRaceGroup(
+                new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
+                new WaitUntilB(driverController)
+            ),
             new ParallelCommandGroup(
                 new SwerveTeleopShortTerm(swerveDrivetrain, driverController),
                 new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS)
