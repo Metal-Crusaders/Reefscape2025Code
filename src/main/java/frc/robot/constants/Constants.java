@@ -229,5 +229,21 @@ public class Constants {
         );
 
     }
+
+    public static class FieldConstants {
+
+        public static final Pose2d[] FIELD_BORDERS = {
+            new Pose2d(0, 0, new Rotation2d(0)),
+        };
+
+        public static final Pose2d[] BLUE_REEF_BORDERS = {
+            new Pose2d(0, 0, new Rotation2d(0)),
+        };
+
+        public static final Pose2d[] RED_REEF_BORDERS = {
+            new Pose2d(0, 0, new Rotation2d(0)),
+        };
+
+    }
     
 }

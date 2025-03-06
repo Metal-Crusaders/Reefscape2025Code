@@ -15,9 +15,9 @@ public class IntakeCoralFull extends SequentialCommandGroup {
         addRequirements(this.coralShooter);
 
         addCommands(
-            new IntakeCoral(this.coralShooter),
-            new WaitCommand(1),
-            new SmallTurn(this.coralShooter)
+            new IntakeCoral(this.coralShooter)
+            // new WaitCommand(1),
+            // new SmallTurn(this.coralShooter)
         );
 
     }

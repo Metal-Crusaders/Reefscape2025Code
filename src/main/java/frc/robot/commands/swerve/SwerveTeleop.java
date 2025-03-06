@@ -31,7 +31,7 @@ public class SwerveTeleop extends Command {
         
         // Initialize the PID controller for rotation
         // TODO CUSTOMIZE THIS!
-        rotationPID = new PIDController(5.0, 0.0, 0.2); // Tuned PID gains
+        rotationPID = new PIDController(3.0, 0.0, 0.2); // Tuned PID gains
         rotationPID.setTolerance(0.01); // Tolerance for stopping rotation
         rotationPID.setIntegratorRange(-Math.PI, Math.PI);
 
@@ -85,6 +85,16 @@ public class SwerveTeleop extends Command {
             rotation = Math.max(-MAX_ROTATION_SPEED, Math.min(MAX_ROTATION_SPEED, rotation));
         }
 
+        // Pose analyzing and estimation
+        
+        // check the nearest border that's about to be hit and get the minimum distance
+        // convert translations to angle
+
+        // grab pose of the whole front (14 inches from center to either end, done robot-centric) and new angle and pass into field border, blue reef border, red reef border to get distance
+
+        // get the minimum distance of the three borders and two edges and pass that into a function that slows the
+        // robot down as it reaches a wall
+
         // Create a field-centric swerve request
         SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric()
             .withVelocityX(translationX)
@@ -110,14 +120,16 @@ public class SwerveTeleop extends Command {
                 drivetrain.getState().Pose, 
                 (DriverStation.getAlliance().get().compareTo(DriverStation.Alliance.Blue) == 0) ?
                 Constants.AutoDriveConstants.BLUE_REEF_POSES : Constants.AutoDriveConstants.RED_REEF_POSES).getRotation().getRadians();
-        } else if (controller.b().getAsBoolean()) {
+        } else if (controller.x().getAsBoolean()) {
             return MathUtils.findClosestTarget(
                 drivetrain.getState().Pose, 
                 (DriverStation.getAlliance().get().compareTo(DriverStation.Alliance.Blue) == 0) ?
                 Constants.AutoDriveConstants.BLUE_CORAL_STATION_POSES : Constants.AutoDriveConstants.RED_CORAL_STATION_POSES).getRotation().getRadians();
-        } else if (controller.x().getAsBoolean()) {
+        } else if (controller.b().getAsBoolean()) {
             return ((DriverStation.getAlliance().get().compareTo(DriverStation.Alliance.Blue) == 0) ? -90 : 90) * Math.PI / 180.0;
-        }
+        } // else if (controller.a().getAsBoolean()) {
+        //     return (90) * Math.PI / 180.0;
+        // }
         return 1e9; // No snap requested
     }
 

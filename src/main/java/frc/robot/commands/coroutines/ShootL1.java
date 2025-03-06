@@ -34,10 +34,7 @@ public class ShootL1 extends SequentialCommandGroup {
         );
 
         addCommands(
-            new ParallelRaceGroup(
-                new AutoLineUpReefUniversal(swerveDrivetrain, 0),
-                new WaitUntilB(driverController)
-            ),
+            new AutoLineUpReefUniversal(swerveDrivetrain, 0),
             new RestMode(elevator, pivot, claw),
             new ScoreCoralL1(coralShooter)
         );

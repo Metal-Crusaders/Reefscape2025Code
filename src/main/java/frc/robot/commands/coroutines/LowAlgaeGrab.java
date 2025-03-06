@@ -47,10 +47,7 @@ public class LowAlgaeGrab extends SequentialCommandGroup {
                 new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS)
             ),
             new ParallelCommandGroup(
-                new ParallelRaceGroup(
-                    new AutoLineUpReefUniversal(swerveDrivetrain, 0),
-                    new WaitUntilB(driverController)
-                ),
+                new AutoLineUpReefUniversal(swerveDrivetrain, 0),
                 new GrabAlgae(algaeClaw)
             ),
             new SwerveTeleopShortTerm(swerveDrivetrain, driverController),

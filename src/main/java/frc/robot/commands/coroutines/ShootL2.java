@@ -38,10 +38,7 @@ public class ShootL2 extends SequentialCommandGroup {
 
         addCommands(
             new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
-            new ParallelRaceGroup(
-                new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
-                new WaitUntilB(driverController)
-            ),
+            new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
             new ParallelCommandGroup(
                 new SwerveTeleopShortTerm(swerveDrivetrain, driverController),
                 new ElevatorPreset(elevator, Constants.ElevatorConstants.L2_ENCODER_TICKS)
