@@ -43,7 +43,7 @@ public class AprilTagCamera extends SubsystemBase {
         this.drivetrain = drivetrain;
 
         cameraEnabled = new SendableChooser<Boolean>();
-        cameraEnabled.setDefaultOption("Enabled", true);
+        cameraEnabled.setDefaultOption(cameraName + "/Enabled", true);
         cameraEnabled.addOption("Disabled", false);
         SmartDashboard.putData(String.format("%s Enabled?", cameraName), cameraEnabled);
 
@@ -61,13 +61,13 @@ public class AprilTagCamera extends SubsystemBase {
             boolean hasPose = false;
 
             if (result.hasTargets()) {
-                SmartDashboard.putNumber("Target Count", result.targets.size());
+                SmartDashboard.putNumber(cameraName + "/Target Count", result.targets.size());
 
                 for (PhotonTrackedTarget target : result.targets) {
-                    SmartDashboard.putNumber("Target ID", target.getFiducialId());
-                    SmartDashboard.putNumber("Yaw", target.getYaw());
-                    SmartDashboard.putNumber("Pitch", target.getPitch());
-                    SmartDashboard.putNumber("Area", target.getArea());
+                    SmartDashboard.putNumber(cameraName + "/Target ID", target.getFiducialId());
+                    SmartDashboard.putNumber(cameraName + "/Yaw", target.getYaw());
+                    SmartDashboard.putNumber(cameraName + "/Pitch", target.getPitch());
+                    SmartDashboard.putNumber(cameraName + "/Area", target.getArea());
 
                     for (int tag : Constants.AutoDriveConstants.GOOD_APRIL_TAGS) {
                         if (target.getFiducialId() == tag) {
@@ -90,7 +90,7 @@ public class AprilTagCamera extends SubsystemBase {
                         if (this.cameraEnabled.getSelected()) {
                             drivetrain.addVisionMeasurement(visionPose.toPose2d(), Utils.getCurrentTimeSeconds());
                         }
-                        SmartDashboard.putString("Vision Pose", visionPose.toString());
+                        SmartDashboard.putString(cameraName + "/Vision Pose", visionPose.toString());
                     }
                 }
             } else {

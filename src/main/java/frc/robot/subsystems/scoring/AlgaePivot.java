@@ -87,7 +87,7 @@ public class AlgaePivot extends SubsystemBase {
             ClosedLoopSlot.kSlot0
         );
 
-        SmartDashboard.putNumber("Pivot Setpoint", setpointTicks);
-        SmartDashboard.putNumber("Pivot Current Position", currentState.position);
+        SmartDashboard.putNumber("Algae Pivot/Setpoint", setpointTicks);
+        SmartDashboard.putNumber("Algae Pivot/Current Position", currentState.position);
     }
 }

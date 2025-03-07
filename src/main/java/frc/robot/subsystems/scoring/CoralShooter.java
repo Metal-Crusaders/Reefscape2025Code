@@ -82,7 +82,7 @@ public class CoralShooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("BEAM EXISTS CORAL SHOOTER", this.beamExists());
+        SmartDashboard.putBoolean("CORAL SHOOTER/BEAM EXISTS", this.beamExists());
     }
 
 }

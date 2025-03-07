@@ -141,10 +141,10 @@ public class Elevator extends SubsystemBase {
             ArbFFUnits.kVoltage
         );
 
-        SmartDashboard.putNumber("Current State Ticks", currentState.position);
-        SmartDashboard.putNumber("Current State Velocity", currentState.velocity);
-        SmartDashboard.putNumber("Goal State Ticks", goalState.position);
-        SmartDashboard.putNumber("Current Ticks", this.getAvgEncoderTicks());
+        SmartDashboard.putNumber("Elevator/Current State Ticks", currentState.position);
+        SmartDashboard.putNumber("Elevator/Current State Velocity", currentState.velocity);
+        SmartDashboard.putNumber("Elevator/Goal State Ticks", goalState.position);
+        SmartDashboard.putNumber("Elevator/Current Ticks", this.getAvgEncoderTicks());
     }
 
     public Command sysIdDynamic(Direction direction) {
