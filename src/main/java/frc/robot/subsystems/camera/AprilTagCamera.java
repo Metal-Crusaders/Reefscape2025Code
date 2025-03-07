@@ -43,7 +43,7 @@ public class AprilTagCamera extends SubsystemBase {
         this.drivetrain = drivetrain;
 
         cameraEnabled = new SendableChooser<Boolean>();
-        cameraEnabled.setDefaultOption("Enabled", true);
+        cameraEnabled.setDefaultOption(cameraName + "/Enabled", true);
         cameraEnabled.addOption("Disabled", false);
         SmartDashboard.putData(String.format("%s Enabled?", cameraName), cameraEnabled);
 

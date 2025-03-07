@@ -37,9 +37,9 @@ public class AlgaePivotPreset extends Command {
     @Override
     public void execute() {
         
-        SmartDashboard.putNumber("Algae Encoder Ticks", claw.getPivotEncoderTicks());
-        SmartDashboard.putNumber("Algae Pivot", claw.getPivotMotor().get());
-        SmartDashboard.putNumber("Algae Pivot Applied", claw.getPivotMotor().getAppliedOutput());
+        SmartDashboard.putNumber("Algae Pivot/Encoder Ticks", claw.getPivotEncoderTicks());
+        SmartDashboard.putNumber("Algae Pivot/Motor", claw.getPivotMotor().get());
+        SmartDashboard.putNumber("Algae Pivot/Applied", claw.getPivotMotor().getAppliedOutput());
         
     }
 
