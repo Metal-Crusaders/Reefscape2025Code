@@ -41,7 +41,6 @@ public class ShootL3NoDriver extends SequentialCommandGroup {
         addCommands(
             new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
             new ParallelDeadlineGroup(
-                new WaitCommand(1.75),
                 new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0))
             ),
             new ParallelCommandGroup(

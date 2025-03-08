@@ -21,6 +21,7 @@ public class GrabAlgaeTime extends Command {
     @Override
     public void initialize() {
         claw.setClawMotor(0);
+        claw.currentlyUsed = true;
         timer.reset();
         timer.start();
     }
@@ -38,6 +39,7 @@ public class GrabAlgaeTime extends Command {
     @Override
     public void end(boolean interrupted) {
         claw.setClawMotor(0);
+        claw.currentlyUsed = false;
         timer.stop();
     }
 }

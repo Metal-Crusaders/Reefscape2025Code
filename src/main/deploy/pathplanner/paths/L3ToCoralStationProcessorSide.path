@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.56,
+        "y": 2.509
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.9845901639344268,
+        "y": 1.6578729508196728
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.3665983606557375,
+        "y": 0.71
+      },
+      "prevControl": {
+        "x": 1.8700819672131148,
+        "y": 1.3093852459016397
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 55.0
+  },
+  "reversed": false,
+  "folder": "TwoL3AlgaePaths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 53.53076560994817
+  },
+  "useDefaultConstraints": true
+}

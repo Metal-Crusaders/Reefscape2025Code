@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.066,
-        "y": 4.055
+        "x": 3.6202868852459016,
+        "y": 5.529456967213114
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.834938524590164,
-        "y": 3.7193135245901634
+        "x": 3.2366803278688523,
+        "y": 6.056915983606556
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.234733606557377,
-        "y": 1.022079918032788
+        "x": 1.2706967213114755,
+        "y": 6.920030737704917
       },
       "prevControl": {
-        "x": 3.308606557377049,
-        "y": 0.746362704918032
+        "x": 1.9300204918032788,
+        "y": 6.020952868852459
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,20 +30,13 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5773441218467387,
-      "rotationDegrees": 0.0
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": -113.98026613178413
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "ProcessAlgae",
-      "waypointRelativePos": 0.58,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -54,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 57.425942865427416
+    "rotation": -55.0
   },
   "reversed": false,
-  "folder": "ThreeL3AlgaePath",
+  "folder": "OpenSidePaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -177.645288863934
+    "rotation": -59.99999999999999
   },
   "useDefaultConstraints": true
 }

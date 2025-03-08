@@ -7,7 +7,7 @@ public class GrabAlgae extends Command {
 
     private final AlgaeClaw claw;
 
-    private final double CLAW_INTAKE_SPEED = -0.3;
+    private final double CLAW_INTAKE_SPEED = -0.6;
 
     public GrabAlgae(AlgaeClaw claw) {
         this.claw = claw;
@@ -17,6 +17,7 @@ public class GrabAlgae extends Command {
 
     @Override
     public void initialize() {
+        claw.currentlyUsed = true;
         claw.setClawMotor(0);
     }
 
@@ -34,6 +35,7 @@ public class GrabAlgae extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        claw.currentlyUsed = false;
         claw.setClawMotor(0);
     }
     

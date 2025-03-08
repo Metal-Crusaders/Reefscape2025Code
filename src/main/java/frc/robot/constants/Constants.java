@@ -23,8 +23,8 @@ public class Constants {
         public static int APAC1 = 4;
         public static int APAC2 = 5;
 
-        public static double SCORE_DEBOUNCING_TIME = 0.3;
-        public static double REST_DEBOUNCING_TIME = 0.1;
+        public static double SCORE_DEBOUNCING_TIME = 0.05;
+        public static double REST_DEBOUNCING_TIME = 0.05;
     }
 
     public static class SwerveConstants {
@@ -58,7 +58,7 @@ public class Constants {
         public static final double ROTATION_PP_KI = 0.0;
         public static final double ROTATION_PP_KD = 0.0;
 
-        public static final double CLOSE_TRANSLATION_PP_KP = 1.5;
+        public static final double CLOSE_TRANSLATION_PP_KP = 2.5;
         public static final double CLOSE_TRANSLATION_PP_KI = 0.0;
         public static final double CLOSE_TRANSLATION_PP_KD = 0.0;
 
@@ -117,22 +117,26 @@ public class Constants {
         };
 
         public static final Pose2d[] BLUE_CORAL_STATION_POSES = {
-            new Pose2d(1.300, 1.000, new Rotation2d(50 * Math.PI / 180.0)),
-            new Pose2d(1.300, 7.000, new Rotation2d(-50 * Math.PI / 180.0))
+            new Pose2d(1.300, 1.000, new Rotation2d(55 * Math.PI / 180.0)),
+            new Pose2d(1.300, 7.000, new Rotation2d(-55 * Math.PI / 180.0))
         };
 
         public static final Pose2d[] RED_CORAL_STATION_POSES = {
-            new Pose2d(16.300, 1.000, new Rotation2d(130 * Math.PI / 180.0)),
-            new Pose2d(16.300, 7.000, new Rotation2d(-130 * Math.PI / 180.0))
+            new Pose2d(16.300, 1.000, new Rotation2d(125 * Math.PI / 180.0)),
+            new Pose2d(16.300, 7.000, new Rotation2d(-125 * Math.PI / 180.0))
         };
 
         public static final double[][] ADDITIONS = {
-            {0.39, 0.21}, // LEFT ADDITION
-            {0.39, -0.18}  // RIGHT ADDITION
+            {0.25, 0.05}, // LEFT ADDITION
+            {0.25, -0.42}  // RIGHT ADDITION
         };
 
         public static final double[] POSE_ADDITION = {
-            -1, 0.75
+            0.0, 0.0
+        };
+
+        public static final double[] ALGAE_ADDITION = {
+            -0.5, 0.0
         };
 
         public static final int[] GOOD_APRIL_TAGS = {
@@ -160,7 +164,7 @@ public class Constants {
         public static final double[] ELEVATOR_PID = {0.1, 0, 0, 0.0}; // kP, kI, kD, kF
         // TODO FIGURE THE PID OUT TOO, using Cranberry Alarm's initial values for now
 
-        public static final double MAX_PERCENT_SPEED = 0.5;
+        public static final double MAX_PERCENT_SPEED = 0.85;
         public static final double MAX_VELOCITY = 0.00005;
         public static final double MAX_ACCELERATION = 2.0;
         public static final double RAMP_RATE = 20.0;
@@ -191,7 +195,7 @@ public class Constants {
         public static final boolean CLAW_INVERTED = false; 
         public static final boolean PIVOT_INVERTED = false; 
 
-        public static final double[] PIVOT_PID = {0.4 / 800.0, 0.0, 0, 0.0}; // kP, kI, kD, kF
+        public static final double[] PIVOT_PID = {0.6 / 800.0, 0.0, 0, 0.0}; // kP, kI, kD, kF
         // TODO preset PID stuff!
 
         // TODO figure this out too
@@ -205,7 +209,7 @@ public class Constants {
         public static final double MAX_ACCELERATION = 105;
         public static final double RAMP_RATE = 20.0;
 
-        public static final double PROXIMITY_THRESHOLD = 120.0; // TODO tweak this
+        public static final double PROXIMITY_THRESHOLD = 170.0; // TODO tweak this
         // public static final double BLUE_THRESHOLD = 200.0; // TODO tweak this
 
     }
@@ -213,19 +217,19 @@ public class Constants {
     public static class CameraConstants {
 
         // CMAERA TO THE FARTHEST RIGHT, photonvision1.local at 10.52.93.11
-        public static final String CAMERA_1_NAME = "testCam";
+        public static final String CAMERA_1_NAME = "testCam2";
 
         public static final Transform3d CAMERA_1_POS = new Transform3d(
             new Translation3d(0.2250948, 0.166770812, -0.2268097534), // forward from center, up from center, right from center
-            new Rotation3d(0, 10.0 * Math.PI / 180.0, -39.0 * Math.PI / 180.0) // 0 0 0 is facing forward, positive rotates that axis clockwise
+            new Rotation3d(0, 10.0 * Math.PI / 180.0, 45.0 * Math.PI / 180.0) // 0 0 0 is facing forward, positive rotates that axis clockwise
         );
 
         // CAMERA TO THE FARTHEST LEFT, photonvision2.local at 10.52.93.12
-        public static final String CAMERA_2_NAME = "testCam2";
+        public static final String CAMERA_2_NAME = "testCam";
 
         public static final Transform3d CAMERA_2_POS = new Transform3d(
-            new Translation3d(0.2908808, 0.166770812, -0.1515299192), // forward from center, up from center, right from center
-            new Rotation3d(0, 10.0 * Math.PI / 180.0, 45.266950 * Math.PI / 180.0) // 0 0 0 is facing forward, positive rotates that axis clockwise
+            new Translation3d(0.3282442, 0.1129792, -0.0508), // forward from center, up from center, right from center
+            new Rotation3d(0, 20.0 * Math.PI / 180.0, 0) // 0 0 0 is facing forward, positive rotates that axis clockwise
         );
 
     }

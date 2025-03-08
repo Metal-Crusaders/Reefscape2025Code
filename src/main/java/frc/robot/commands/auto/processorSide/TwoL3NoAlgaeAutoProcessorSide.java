@@ -1,4 +1,4 @@
-package frc.robot.commands.auto;
+package frc.robot.commands.auto.processorSide;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -28,49 +28,37 @@ import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
-public class ThreeL3NoAlgaeAuto extends SequentialCommandGroup {
+public class TwoL3NoAlgaeAutoProcessorSide extends SequentialCommandGroup {
 
-    public ThreeL3NoAlgaeAuto(CommandSwerveDrivetrain swerve, Elevator elevator, AlgaeClaw algaeClaw, AlgaePivot algaePivot, CoralShooter coralShooter) {
+    public TwoL3NoAlgaeAutoProcessorSide(CommandSwerveDrivetrain swerve, Elevator elevator, AlgaeClaw algaeClaw, AlgaePivot algaePivot, CoralShooter coralShooter) {
 
         // drive from start to L3
-        Command resetPose = new InstantCommand(), startToL3One, l3OneToCoralStation, l3ToCoralStation, coralStationToL3, coralStationToL32;
+        Command resetPose = new InstantCommand(), startToL3, l3ToCoralStation, coralStationToL3;
         Pose2d startingPose;
         try {
-            startToL3One = swerve.driveAlongPath(PathPlannerPath.fromPathFile("StartToFirstL3"));
+            startToL3 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("StartingToL3ProcessorSide"));
             if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
-                startingPose = PathPlannerPath.fromPathFile("StartToFirstL3").getStartingHolonomicPose().get();
+                startingPose = PathPlannerPath.fromPathFile("StartingToL3ProcessorSide").getStartingHolonomicPose().get();
                 resetPose = new InstantCommand(() -> swerve.resetPose(startingPose), swerve);
             } else {
-                startingPose = PathPlannerPath.fromPathFile("StartToFirstL3").flipPath().getStartingHolonomicPose().get();
+                startingPose = PathPlannerPath.fromPathFile("StartingToL3ProcessorSide").flipPath().getStartingHolonomicPose().get();
                 resetPose = new InstantCommand(() -> swerve.resetPose(startingPose), swerve);
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            startToL3One = null; // or handle the error appropriately
+            startToL3 = null; // or handle the error appropriately
         }
         try {
-            l3OneToCoralStation = swerve.driveAlongPath(PathPlannerPath.fromPathFile("L3-1ToCoralStation"));
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-            l3OneToCoralStation = null; // or handle the error appropriately
-        }
-        try {
-            l3ToCoralStation = swerve.driveAlongPath(PathPlannerPath.fromPathFile("L3ToCoralStation"));
+            l3ToCoralStation = swerve.driveAlongPath(PathPlannerPath.fromPathFile("L3ToCoralStationProcessorSide"));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             l3ToCoralStation = null; // or handle the error appropriately
         }
         try {
-            coralStationToL3 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("CoralStationToL3"));
+            coralStationToL3 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("CoralStationToL3ProcessorSide"));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             coralStationToL3 = null; // or handle the error appropriately
-        }
-        try {
-            coralStationToL32 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("CoralStationToL3"));
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-            coralStationToL32 = null; // or handle the error appropriately
         }
 
         addRequirements(
@@ -84,17 +72,13 @@ public class ThreeL3NoAlgaeAuto extends SequentialCommandGroup {
         addCommands(
             resetPose,
             new ParallelCommandGroup(
-                startToL3One,
+                startToL3,
                 new IntakeCoralFull(coralShooter)
             ),
-            new LowAlgaeGrabNoDriver(swerve, elevator, coralShooter, algaePivot, algaeClaw),
-            l3OneToCoralStation,
-            new IntakeCoralFull(coralShooter), // coral station coroutine
-            coralStationToL3,
             new ShootL3NoDriver(true, swerve, elevator, coralShooter, algaePivot, algaeClaw), // L3 coroutine
             l3ToCoralStation,
             new IntakeCoralFull(coralShooter), // coral station coroutine
-            coralStationToL32,
+            coralStationToL3,
             new LowAlgaeGrabNoDriver(swerve, elevator, coralShooter, algaePivot, algaeClaw) // low algae coroutine
         );
 

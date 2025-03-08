@@ -16,6 +16,7 @@ import frc.robot.commands.scoring.algae.GrabAlgaeTime;
 import frc.robot.commands.scoring.coral.ScoreCoral;
 import frc.robot.commands.swerve.AutoLineUpReef;
 import frc.robot.commands.swerve.AutoLineUpReefUniversal;
+import frc.robot.commands.swerve.CloseDriveToClosestAlgaeOffset;
 import frc.robot.commands.swerve.CloseDriveToClosestReef;
 import frc.robot.commands.swerve.CloseDriveToClosestReefGoodOffset;
 import frc.robot.commands.swerve.CloseDriveToPose;
@@ -48,14 +49,13 @@ public class LowAlgaeGrabNoDriver extends SequentialCommandGroup {
                 new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS)
             ),
             new ParallelDeadlineGroup(
-                new WaitCommand(1.5),
                 new AutoLineUpReefUniversal(swerveDrivetrain, 0),
                 new GrabAlgae(algaeClaw)
             ),
             new ScoreCoral(coralShooter),
             new ParallelCommandGroup(
                 new GrabAlgaeTime(algaeClaw, 1),
-                new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
+                new CloseDriveToClosestAlgaeOffset(swerveDrivetrain),
                 new SequentialCommandGroup(
                     new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS),
                     new ElevatorPreset(elevator, Constants.ElevatorConstants.PROCESSOR_ALGAE_TICKS)

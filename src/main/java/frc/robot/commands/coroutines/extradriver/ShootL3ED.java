@@ -36,7 +36,7 @@ public class ShootL3ED extends SequentialCommandGroup {
         );
 
         addCommands(
-            // new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
+            // new AutoLineUpReefUniversal(swerveDrivetrain,    (right ? 1 : 0)),
             new ParallelCommandGroup(
                 new SwerveTeleopShortTerm(swerveDrivetrain, driverController),
                 new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS)

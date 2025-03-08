@@ -26,6 +26,10 @@ public class AlgaeClaw extends SubsystemBase {
     private static final double PULSE_FREQUENCY = 1;
     private static final double PULSE_TIME = 0.2;
     private static final double PULSE_SPEED = -0.4;
+
+    private static final double PASSIVE_HOLD = -0.05;
+
+    public boolean currentlyUsed = false;
     
     private final SparkMax clawMotor;
     private final ColorSensorV3 colorSensor;
@@ -46,6 +50,8 @@ public class AlgaeClaw extends SubsystemBase {
         this.timer = new Timer();
         this.timer.reset();
         this.timer.start();
+
+        currentlyUsed = false;
     }
 
     public SparkMax getClawMotor() {
@@ -67,14 +73,22 @@ public class AlgaeClaw extends SubsystemBase {
         SmartDashboard.putNumber("Color Sensor Blue", this.colorSensor.getBlue());
         SmartDashboard.putNumber("Color Sensor Test", this.colorSensor.getRed());
 
-        if (this.timer.hasElapsed(PULSE_FREQUENCY) && this.getClawMotor().get() == 0.0 && this.holdingAlgae()) {
-            CommandScheduler.getInstance().schedule(new InstantCommand(() -> {
-                this.clawMotor.set(PULSE_SPEED);
-                Timer.delay(PULSE_TIME);
-                this.clawMotor.set(0.0);
-            }));
-            this.timer.reset();
-            this.timer.start();
+        // if (this.timer.hasElapsed(PULSE_FREQUENCY) && this.getClawMotor().get() == 0.0 && this.holdingAlgae()) {
+        //     CommandScheduler.getInstance().schedule(new InstantCommand(() -> {
+        //         this.clawMotor.set(PULSE_SPEED);
+        //         Timer.delay(PULSE_TIME);
+        //         this.clawMotor.set(0.0);
+        //     }));
+        //     this.timer.reset();
+        //     this.timer.start();
+        // }
+
+        if (!currentlyUsed) {
+            if (this.holdingAlgae() && (this.clawMotor.get() == 0.0)) {
+                this.clawMotor.set(PASSIVE_HOLD);
+            } else {
+                this.clawMotor.set(0);
+            }
         }
     }
 }
