@@ -66,8 +66,8 @@ public class Constants {
         public static final double CLOSE_ROTATION_PP_KI = 0.0;
         public static final double CLOSE_ROTATION_PP_KD = 0.0;
 
-        public static final double MAX_LINEAR_VELOCITY = 2.0;   
-        public static final double MAX_LINEAR_ACCELERATION = 1.5;
+        public static final double MAX_LINEAR_VELOCITY = 2.5;
+        public static final double MAX_LINEAR_ACCELERATION = 2.0;
         public static final double MAX_ANGULAR_VELOCITY = 2 * Math.PI;
         public static final double MAX_ANGULAR_ACCELERATION = 4 * Math.PI;
 
@@ -127,7 +127,7 @@ public class Constants {
         };
 
         public static final double[][] ADDITIONS = {
-            {0.25, 0.05}, // LEFT ADDITION
+            {0.27, 0.05}, // LEFT ADDITION
             {0.25, -0.42}  // RIGHT ADDITION
         };
 
@@ -139,8 +139,12 @@ public class Constants {
             -0.5, 0.0
         };
 
-        public static final int[] GOOD_APRIL_TAGS = {
-            6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22
+        public static final int[] GOOD_BLUE_APRIL_TAGS = {
+            17, 18, 19, 20, 21, 22
+        };
+
+        public static final int[] GOOD_RED_APRIL_TAGS = {
+            6, 7, 8, 9, 10, 11
         };
 
     }

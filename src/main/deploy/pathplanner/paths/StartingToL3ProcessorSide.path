@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.684,
-        "y": 1.777305327868853
+        "x": 7.300512295081968,
+        "y": 1.6574282786885248
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.701127049180327,
-        "y": 0.8902151639344253
+        "x": 6.317639344262295,
+        "y": 0.7703381147540971
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.56,
-        "y": 2.508555327868852
+        "x": 3.4764344262295084,
+        "y": 2.6404200819672123
       },
       "prevControl": {
-        "x": 3.1287909836065575,
-        "y": 2.02904713114754
+        "x": 3.1291393442622946,
+        "y": 1.2498463114754101
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": 59.99999999999999
   },
   "reversed": false,
-  "folder": "TwoL3AlgaePaths",
+  "folder": "ProcessorSidePaths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 156.03165338224176

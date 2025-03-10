@@ -1,5 +1,6 @@
 package frc.robot.subsystems.camera;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,7 +47,6 @@ public class AprilTagCamera extends SubsystemBase {
         cameraEnabled.setDefaultOption("Enabled", true);
         cameraEnabled.addOption("Disabled", false);
         SmartDashboard.putData(String.format("%s Enabled?", cameraName), cameraEnabled);
-
     }
 
     @Override
@@ -69,10 +69,19 @@ public class AprilTagCamera extends SubsystemBase {
                     SmartDashboard.putNumber("Pitch", target.getPitch());
                     SmartDashboard.putNumber("Area", target.getArea());
 
-                    for (int tag : Constants.AutoDriveConstants.GOOD_APRIL_TAGS) {
-                        if (target.getFiducialId() == tag) {
-                            hasPose = true;
-                            break;
+                    if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
+                        for (int tag : Constants.AutoDriveConstants.GOOD_BLUE_APRIL_TAGS) {
+                            if (target.getFiducialId() == tag) {
+                                hasPose = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        for (int tag : Constants.AutoDriveConstants.GOOD_RED_APRIL_TAGS) {
+                            if (target.getFiducialId() == tag) {
+                                hasPose = true;
+                                break;
+                            }
                         }
                     }
                     

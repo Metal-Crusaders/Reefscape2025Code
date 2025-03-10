@@ -45,7 +45,7 @@
     "rotation": 55.0
   },
   "reversed": false,
-  "folder": "TwoL3AlgaePaths",
+  "folder": "ProcessorSidePaths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -90.0

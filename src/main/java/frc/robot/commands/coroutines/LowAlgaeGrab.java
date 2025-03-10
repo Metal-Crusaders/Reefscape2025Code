@@ -54,7 +54,6 @@ public class LowAlgaeGrab extends SequentialCommandGroup {
             new SwerveTeleopShortTerm(swerveDrivetrain, driverController),
             new ScoreCoral(coralShooter),
             new ParallelCommandGroup(
-                new GrabAlgaeTime(algaeClaw, 2),
                 new CloseDriveToClosestAlgaeOffset(swerveDrivetrain),
                 new RestMode(elevator, algaePivot, algaeClaw)
             )

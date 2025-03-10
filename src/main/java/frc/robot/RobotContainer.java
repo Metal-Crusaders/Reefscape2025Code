@@ -41,18 +41,22 @@ import frc.robot.commands.swerve.CloseDriveToClosestReefGoodOffset;
 import frc.robot.commands.swerve.CloseDriveToPose;
 import frc.robot.commands.swerve.SwerveTeleopShortTerm;
 import frc.robot.commands.utils.JoystickInterruptible;
+import frc.robot.commands.auto.center.CenterL3AndProcessAuto;
 import frc.robot.commands.auto.center.TestAlgaeL3Auto;
-import frc.robot.commands.auto.center.ThreeL3NoAlgaeAutoCenterToOpen;
-import frc.robot.commands.auto.center.ThreeL3NoAlgaeAutoCenterToProcessor;
-import frc.robot.commands.auto.openSide.TwoL3AndL1NoAlgaeAutoOpenSide;
-import frc.robot.commands.auto.openSide.TwoL3NoAlgaeAutoOpenSide;
+import frc.robot.commands.auto.openSide.TwoL3AndL2AutoOpenSide;
+import frc.robot.commands.auto.openSide.TwoL3BuddyAutoOpenSide;
 import frc.robot.commands.auto.processorSide.TwoL3AlgaeAutoProcessorSide;
+import frc.robot.commands.auto.processorSide.TwoL3AndL2AutoProcessorSide;
 import frc.robot.commands.coroutines.*;
 import frc.robot.commands.coroutines.extradriver.HighAlgaeGrabCoralFirstED;
 import frc.robot.commands.coroutines.extradriver.HighAlgaeGrabED;
 import frc.robot.commands.coroutines.extradriver.LowAlgaeGrabED;
 import frc.robot.commands.coroutines.extradriver.ShootL2ED;
 import frc.robot.commands.coroutines.extradriver.ShootL3ED;
+import frc.robot.commands.coroutines.nodriver.HighAlgaeGrabCoralFirstNoDriver;
+import frc.robot.commands.coroutines.nodriver.LowAlgaeGrabNoDriver;
+import frc.robot.commands.coroutines.nodriver.ShootL2NoDriver;
+import frc.robot.commands.coroutines.nodriver.ShootL3NoDriver;
 import frc.robot.constants.Constants;
 import frc.robot.constants.TunerConstants;
 import frc.robot.constants.Constants.AlgaeClawConstants;
@@ -118,14 +122,12 @@ public class RobotContainer {
     // coroutines
     // write code for all coroutines under the coroutines folder here:
     private final Command restModeCoroutine = new RestMode(elevator, algaePivot, algaeClaw);
-    private final Command lowAlgaeGrabCoroutine = new LowAlgaeGrab(drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
-    private final Command highAlgaeGrabCoroutine = new HighAlgaeGrab(drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
-    private final Command highAlgaeGrabCoralFirstCoroutine = new HighAlgaeGrabCoralFirst(drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
-    private final Command shootL1Coroutine = new ShootL1(drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
-    private final Command shootL2LeftCoroutine = new ShootL2(false, drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
-    private final Command shootL2RightCoroutine = new ShootL2(true, drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
-    private final Command shootL3LeftCoroutine = new ShootL3(false, drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
-    private final Command shootL3RightCoroutine = new ShootL3(true, drivetrain, elevator, coralShooter, algaePivot, algaeClaw, driverController);
+    private final Command lowAlgaeGrabCoroutine = new LowAlgaeGrabNoDriver(drivetrain, elevator, coralShooter, algaePivot, algaeClaw);
+    private final Command highAlgaeGrabCoralFirstCoroutine = new HighAlgaeGrabCoralFirstNoDriver(drivetrain, elevator, coralShooter, algaePivot, algaeClaw);
+    private final Command shootL2LeftCoroutine = new ShootL2NoDriver(false, drivetrain, elevator, coralShooter, algaePivot, algaeClaw);
+    private final Command shootL2RightCoroutine = new ShootL2NoDriver(true, drivetrain, elevator, coralShooter, algaePivot, algaeClaw);
+    private final Command shootL3LeftCoroutine = new ShootL3NoDriver(false, drivetrain, elevator, coralShooter, algaePivot, algaeClaw);
+    private final Command shootL3RightCoroutine = new ShootL3NoDriver(true, drivetrain, elevator, coralShooter, algaePivot, algaeClaw);
     private final Command intakeCoralCoroutine = new IntakeCoralFull(coralShooter);
     private final Command processAlgaeCoroutine = new ProcessAlgae(elevator, algaePivot, algaeClaw);
 
@@ -162,7 +164,7 @@ public class RobotContainer {
         // driverController.a().whileTrue(new CloseDriveToClosestReefGoodOffset(drivetrain));
         // driverController.x().whileTrue(reefAutoDrive);
         driverController.start().whileTrue(new InstantCommand(() -> drivetrain.resetRotation(new Rotation2d(0)), drivetrain));
-        // driverController.b().onTrue(processorAutoDrive);
+        driverController.back().whileTrue(processorAutoDrive);
 
         // SysID Routines
         // driverController.back().and(driverController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -205,24 +207,20 @@ public class RobotContainer {
 
     private void initializeAutoCommands() {
         // auto commands
-        final Command testL3Auto = new TestAlgaeL3Auto(drivetrain, elevator, coralShooter, algaeClaw, algaePivot);
+        final Command centerL3ProcessAlgaeAuto = new CenterL3AndProcessAuto(drivetrain, elevator, coralShooter, algaeClaw, algaePivot);
         final Command twoL3AlgaeAutoProcessorSide = new TwoL3AlgaeAutoProcessorSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
-        final Command twoL3NoAlgaeAutoProcessorSide = new TwoL3NoAlgaeAutoOpenSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
-        final Command threeL3NoAlgaeAutoProcessorSide = new ThreeL3NoAlgaeAutoCenterToProcessor(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
-        final Command twoL3OpenSide = new TwoL3NoAlgaeAutoOpenSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
-        final Command threeL3OpenSide = new ThreeL3NoAlgaeAutoCenterToOpen(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
-        final Command twoL3AndL1OpenSide = new TwoL3AndL1NoAlgaeAutoOpenSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
+        final Command twoL3AndL2ProcessorSide = new TwoL3AndL2AutoProcessorSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
+        final Command twoL3BumpOpenSide = new TwoL3BuddyAutoOpenSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
+        final Command twoL3AndL2OpenSide = new TwoL3AndL2AutoOpenSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
 
         // autoselector
         autoSelector = new SendableChooser<>();
         autoSelector.setDefaultOption("No Auto", new InstantCommand(() -> drivetrain.resetPose(drivetrain.getState().Pose), drivetrain));
-        autoSelector.addOption("L3 + Grab Algae Auto - Center", testL3Auto);
-        autoSelector.addOption("Two L3 Algae Auto - Processor Side", twoL3AlgaeAutoProcessorSide);
-        autoSelector.addOption("Two L3 NO Algae Auto - Processor Side", twoL3NoAlgaeAutoProcessorSide);
-        autoSelector.addOption("Two L3 NO Algae Auto - Open Side", twoL3OpenSide);
-        autoSelector.addOption("Two L3 + L1 - Open Side", twoL3AndL1OpenSide);
-        autoSelector.addOption("Three L3 NO Algae Auto - Center to Processor Side", threeL3NoAlgaeAutoProcessorSide);
-        autoSelector.addOption("Three L3 NO Algae Auto - Center to Open Side", threeL3OpenSide);
+        autoSelector.addOption("L3 + Process Algae Auto - Center", centerL3ProcessAlgaeAuto);
+        autoSelector.addOption("Two L3 Process Algae Auto - Processor Side", twoL3AlgaeAutoProcessorSide);
+        autoSelector.addOption("Two L3 + L2 Auto - Processor Side", twoL3AndL2ProcessorSide);
+        autoSelector.addOption("Two L3 + L2 - Open Side", twoL3AndL2OpenSide);
+        autoSelector.addOption("Two L3 + Buddy Taxi - Open Side", twoL3BumpOpenSide);
         
         autoSelector.close();
         SmartDashboard.putData("Auto Selector", autoSelector);

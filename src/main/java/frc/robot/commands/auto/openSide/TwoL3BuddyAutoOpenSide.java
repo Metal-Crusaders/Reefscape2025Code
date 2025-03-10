@@ -1,4 +1,4 @@
-package frc.robot.commands.auto.processorSide;
+package frc.robot.commands.auto.openSide;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -19,29 +19,32 @@ import frc.robot.commands.coroutines.ProcessAlgae;
 import frc.robot.commands.coroutines.ShootL3;
 import frc.robot.commands.coroutines.nodriver.LowAlgaeGrabNoDriver;
 import frc.robot.commands.coroutines.nodriver.ShootL3NoDriver;
+import frc.robot.commands.elevator.ElevatorPreset;
+import frc.robot.commands.scoring.algae.AlgaePivotPreset;
 import frc.robot.commands.scoring.algae.ProcessAlgaeSubroutine;
 import frc.robot.commands.scoring.coral.IntakeCoral;
 import frc.robot.commands.scoring.coral.IntakeCoralFull;
+import frc.robot.constants.Constants;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.scoring.AlgaeClaw;
 import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
-public class TwoL3NoAlgaeAutoProcessorSide extends SequentialCommandGroup {
+public class TwoL3BuddyAutoOpenSide extends SequentialCommandGroup {
 
-    public TwoL3NoAlgaeAutoProcessorSide(CommandSwerveDrivetrain swerve, Elevator elevator, AlgaeClaw algaeClaw, AlgaePivot algaePivot, CoralShooter coralShooter) {
+    public TwoL3BuddyAutoOpenSide(CommandSwerveDrivetrain swerve, Elevator elevator, AlgaeClaw algaeClaw, AlgaePivot algaePivot, CoralShooter coralShooter) {
 
         // drive from start to L3
-        Command resetPose = new InstantCommand(), startToL3, l3ToCoralStation, coralStationToL3;
+        Command resetPose = new InstantCommand(), startToL3, l3ToCoralStation, coralStationToL3, l3ToBump;
         Pose2d startingPose;
         try {
-            startToL3 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("StartingToL3ProcessorSide"));
+            startToL3 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("StartingToL3OpenSide"));
             if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
-                startingPose = PathPlannerPath.fromPathFile("StartingToL3ProcessorSide").getStartingHolonomicPose().get();
+                startingPose = PathPlannerPath.fromPathFile("StartingToL3OpenSide").getStartingHolonomicPose().get();
                 resetPose = new InstantCommand(() -> swerve.resetPose(startingPose), swerve);
             } else {
-                startingPose = PathPlannerPath.fromPathFile("StartingToL3ProcessorSide").flipPath().getStartingHolonomicPose().get();
+                startingPose = PathPlannerPath.fromPathFile("StartingToL3OpenSide").flipPath().getStartingHolonomicPose().get();
                 resetPose = new InstantCommand(() -> swerve.resetPose(startingPose), swerve);
             }
         } catch (IOException | ParseException e) {
@@ -49,16 +52,22 @@ public class TwoL3NoAlgaeAutoProcessorSide extends SequentialCommandGroup {
             startToL3 = null; // or handle the error appropriately
         }
         try {
-            l3ToCoralStation = swerve.driveAlongPath(PathPlannerPath.fromPathFile("L3ToCoralStationProcessorSide"));
+            l3ToCoralStation = swerve.driveAlongPath(PathPlannerPath.fromPathFile("L3ToCoralStationOpenSide"));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             l3ToCoralStation = null; // or handle the error appropriately
         }
         try {
-            coralStationToL3 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("CoralStationToL3ProcessorSide"));
+            coralStationToL3 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("CoralStationToL3OpenSide"));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             coralStationToL3 = null; // or handle the error appropriately
+        }
+        try {
+            l3ToBump = swerve.driveAlongPath(PathPlannerPath.fromPathFile("L3ToBumpDisengageAlgae"));
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            l3ToBump = null; // or handle the error appropriately
         }
 
         addRequirements(
@@ -79,7 +88,14 @@ public class TwoL3NoAlgaeAutoProcessorSide extends SequentialCommandGroup {
             l3ToCoralStation,
             new IntakeCoralFull(coralShooter), // coral station coroutine
             coralStationToL3,
-            new LowAlgaeGrabNoDriver(swerve, elevator, coralShooter, algaePivot, algaeClaw) // low algae coroutine
+            new LowAlgaeGrabNoDriver(swerve, elevator, coralShooter, algaePivot, algaeClaw), // low algae coroutine
+            new ParallelCommandGroup(
+                l3ToBump,
+                new SequentialCommandGroup(
+                    new WaitCommand(0.2),
+                    new ProcessAlgae(elevator, algaePivot, algaeClaw)
+                )
+            )
         );
 
     }

@@ -4,8 +4,8 @@
   "holonomicMode": true,
   "pathFolders": [
     "OpenSidePaths",
-    "ThreeL3AlgaePath",
-    "TwoL3AlgaePaths"
+    "CenterPaths",
+    "ProcessorSidePaths"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

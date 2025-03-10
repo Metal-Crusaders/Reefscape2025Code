@@ -54,7 +54,6 @@ public class LowAlgaeGrabNoDriver extends SequentialCommandGroup {
             ),
             new ScoreCoral(coralShooter),
             new ParallelCommandGroup(
-                new GrabAlgaeTime(algaeClaw, 1),
                 new CloseDriveToClosestAlgaeOffset(swerveDrivetrain),
                 new SequentialCommandGroup(
                     new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS),

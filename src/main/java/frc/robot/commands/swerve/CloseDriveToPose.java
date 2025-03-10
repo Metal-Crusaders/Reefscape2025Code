@@ -21,7 +21,7 @@ public class CloseDriveToPose extends Command {
 
     private final double POSE_TRANSLATION_UPDATE_TOLERANCE = 0.01;
     private final double POSE_ROTATION_UPDATE_TOLERANCE = 0.01; // TODO ADJUST
-    private final double CHECKING_PERIOD = 0.2;
+    private final double CHECKING_PERIOD = 0.15;
     private final double COOL_DOWN = 0.35;
 
     private boolean cooldown;

@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 2.9845901639344268,
-        "y": 1.6578729508196728
+        "y": 1.657872950819673
       },
       "isLocked": false,
       "linkedName": null
@@ -45,7 +45,7 @@
     "rotation": 55.0
   },
   "reversed": false,
-  "folder": "TwoL3AlgaePaths",
+  "folder": "ProcessorSidePaths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 53.53076560994817

@@ -57,7 +57,6 @@ public class HighAlgaeGrabCoralFirst extends SequentialCommandGroup {
             ),
             new ParallelCommandGroup(
                 new CloseDriveToClosestAlgaeOffset(swerveDrivetrain),
-                new GrabAlgaeTime(algaeClaw, 2),
                 new RestMode(elevator, algaePivot, algaeClaw)
             )
         );

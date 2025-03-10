@@ -43,12 +43,12 @@ import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
-public class TwoL3AlgaeAutoProcessorSide extends SequentialCommandGroup {
+public class TwoL3AndL2AutoProcessorSide extends SequentialCommandGroup {
 
-    public TwoL3AlgaeAutoProcessorSide(CommandSwerveDrivetrain swerve, Elevator elevator, AlgaeClaw algaeClaw, AlgaePivot algaePivot, CoralShooter coralShooter) {
+    public TwoL3AndL2AutoProcessorSide(CommandSwerveDrivetrain swerve, Elevator elevator, AlgaeClaw algaeClaw, AlgaePivot algaePivot, CoralShooter coralShooter) {
 
         // drive from start to L3
-        Command resetPose = new InstantCommand(), startToL3, l3ToCoralStation, coralStationToL3, l3ToProcessor;
+        Command resetPose = new InstantCommand(), startToL3, l3ToCoralStation, coralStationToL3, l3ToCoralStation2, coralStationToL2;
         Pose2d startingPose;
         try {
             startToL3 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("StartingToL3ProcessorSide"));
@@ -70,16 +70,22 @@ public class TwoL3AlgaeAutoProcessorSide extends SequentialCommandGroup {
             l3ToCoralStation = null; // or handle the error appropriately
         }
         try {
+            l3ToCoralStation2 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("L3ToCoralStationProcessorSideWithAlgae"));
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            l3ToCoralStation2 = null; // or handle the error appropriately
+        }
+        try {
             coralStationToL3 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("CoralStationToL3ProcessorSide"));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             coralStationToL3 = null; // or handle the error appropriately
         }
         try {
-            l3ToProcessor = swerve.driveAlongPath(PathPlannerPath.fromPathFile("L3ToProcessor"));
+            coralStationToL2 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("CoralStationToL2ProcessorSide"));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            l3ToProcessor = null; // or handle the error appropriately
+            coralStationToL2 = null; // or handle the error appropriately
         }
 
         addRequirements(
@@ -122,13 +128,28 @@ public class TwoL3AlgaeAutoProcessorSide extends SequentialCommandGroup {
                 new GrabAlgae(algaeClaw)
             ),
             new ScoreCoral(coralShooter),
-            new CloseDriveToClosestAlgaeOffset(swerve),
+            // rest of the path
             new ParallelCommandGroup(
-                new CloseDriveToClosestAlgaeOffset(swerve),
-                new RestMode(elevator, algaePivot, algaeClaw)
+                l3ToCoralStation2,
+                new SequentialCommandGroup(
+                    new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS),
+                    new ElevatorPreset(elevator, Constants.ElevatorConstants.PROCESSOR_ALGAE_TICKS),
+                    new WaitCommand(0.2),
+                    new ProcessAlgae(elevator, algaePivot, algaeClaw)
+                )
             ),
-            l3ToProcessor,
-            new ProcessAlgae(elevator, algaePivot, algaeClaw)
+            new IntakeCoralFull(coralShooter),
+            
+            new ParallelCommandGroup(
+                coralStationToL2,
+                new ElevatorPreset(elevator, Constants.ElevatorConstants.L2_ENCODER_TICKS),
+                new SequentialCommandGroup(
+                    new WaitCommand(1.25),
+                    new ScoreCoralL1(coralShooter)
+                )
+            ),
+            // new AutoLineUpReefUniversal(swerve, 0),
+            new RestMode(elevator, algaePivot, algaeClaw)
         );
 
     }
