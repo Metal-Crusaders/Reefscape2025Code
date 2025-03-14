@@ -5,6 +5,7 @@ import java.util.Set;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -48,17 +49,18 @@ public class LowAlgaeGrabNoDriver extends SequentialCommandGroup {
                 new ElevatorPreset(elevator, Constants.ElevatorConstants.LOW_ALGAE_ENCODER_TICKS),
                 new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS)
             ),
-            new ParallelDeadlineGroup(
+            new ParallelCommandGroup(
                 new AutoLineUpReefUniversal(swerveDrivetrain, 0),
                 new GrabAlgae(algaeClaw)
             ),
             new ScoreCoral(coralShooter),
-            new ParallelCommandGroup(
+            new ParallelRaceGroup(
                 new CloseDriveToClosestAlgaeOffset(swerveDrivetrain),
-                new SequentialCommandGroup(
-                    new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS),
-                    new ElevatorPreset(elevator, Constants.ElevatorConstants.PROCESSOR_ALGAE_TICKS)
-                )
+                new GrabAlgaeTime(algaeClaw, 0.75)
+            ),
+            new SequentialCommandGroup(
+                new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS),
+                new ElevatorPreset(elevator, Constants.ElevatorConstants.PROCESSOR_ALGAE_TICKS)
             )
         );
 

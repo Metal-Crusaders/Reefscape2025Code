@@ -68,10 +68,10 @@ public class AlgaeClaw extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Claw Motor Speed", clawMotor.get());
-        SmartDashboard.putNumber("Color Sensor Proximity", this.colorSensor.getProximity());
-        SmartDashboard.putNumber("Color Sensor Blue", this.colorSensor.getBlue());
-        SmartDashboard.putNumber("Color Sensor Test", this.colorSensor.getRed());
+        // SmartDashboard.putNumber("Claw Motor Speed", clawMotor.get());
+        // SmartDashboard.putNumber("Color Sensor Proximity", this.colorSensor.getProximity());
+        // SmartDashboard.putNumber("Color Sensor Blue", this.colorSensor.getBlue());
+        // SmartDashboard.putNumber("Color Sensor Test", this.colorSensor.getRed());
 
         // if (this.timer.hasElapsed(PULSE_FREQUENCY) && this.getClawMotor().get() == 0.0 && this.holdingAlgae()) {
         //     CommandScheduler.getInstance().schedule(new InstantCommand(() -> {

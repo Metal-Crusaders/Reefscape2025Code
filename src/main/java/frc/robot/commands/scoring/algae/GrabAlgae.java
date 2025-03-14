@@ -7,7 +7,7 @@ public class GrabAlgae extends Command {
 
     private final AlgaeClaw claw;
 
-    private final double CLAW_INTAKE_SPEED = -0.6;
+    private final double CLAW_INTAKE_SPEED = -0.7;
 
     public GrabAlgae(AlgaeClaw claw) {
         this.claw = claw;

@@ -41,6 +41,7 @@ public class HighAlgaeGrabCoralFirstNoDriver extends SequentialCommandGroup {
         );
 
         addCommands(
+            new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
             new ParallelCommandGroup(
                 new AutoLineUpReefUniversal(swerveDrivetrain, 0),
                 new ElevatorPreset(elevator, Constants.ElevatorConstants.L2_ENCODER_TICKS) 
@@ -56,9 +57,10 @@ public class HighAlgaeGrabCoralFirstNoDriver extends SequentialCommandGroup {
                 new GrabAlgae(algaeClaw)
             ),
             new ParallelCommandGroup(
-                new CloseDriveToClosestAlgaeOffset(swerveDrivetrain),
-                new RestMode(elevator, algaePivot, algaeClaw)
-            )
+                new GrabAlgaeTime(algaeClaw, 0.5),
+                new CloseDriveToClosestAlgaeOffset(swerveDrivetrain)
+            ),
+            new RestMode(elevator, algaePivot, algaeClaw)
         );
     }
 

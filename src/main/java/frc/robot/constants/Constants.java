@@ -58,7 +58,7 @@ public class Constants {
         public static final double ROTATION_PP_KI = 0.0;
         public static final double ROTATION_PP_KD = 0.0;
 
-        public static final double CLOSE_TRANSLATION_PP_KP = 2.5;
+        public static final double CLOSE_TRANSLATION_PP_KP = 2.7;
         public static final double CLOSE_TRANSLATION_PP_KI = 0.0;
         public static final double CLOSE_TRANSLATION_PP_KD = 0.0;
 
@@ -127,12 +127,12 @@ public class Constants {
         };
 
         public static final double[][] ADDITIONS = {
-            {0.27, 0.05}, // LEFT ADDITION
+            {0.4, 0.03}, // LEFT ADDITION
             {0.25, -0.42}  // RIGHT ADDITION
         };
 
         public static final double[] POSE_ADDITION = {
-            0.0, 0.0
+            -0.2, 0.0
         };
 
         public static final double[] ALGAE_ADDITION = {
@@ -159,16 +159,16 @@ public class Constants {
         public static final double L1_ENCODER_TICKS = 0;
         public static final double PROCESSOR_ALGAE_TICKS = 10;
         public static final double L2_ENCODER_TICKS = 13.8095;
-        public static final double L3_ENCODER_TICKS = 41.8095;
+        public static final double L3_ENCODER_TICKS = 42.8095;
         public static final double ALGAE_SPOKE_OFFSET = 27;
         public static final double LOW_ALGAE_ENCODER_TICKS = L2_ENCODER_TICKS + ALGAE_SPOKE_OFFSET;
-        public static final double HIGH_ALGAE_ENCODER_TICKS = L3_ENCODER_TICKS + ALGAE_SPOKE_OFFSET;
+        public static final double HIGH_ALGAE_ENCODER_TICKS = 41.8095 + ALGAE_SPOKE_OFFSET;
         public static final double MAX_ENCODER_TICKS = 69;
 
         public static final double[] ELEVATOR_PID = {0.1, 0, 0, 0.0}; // kP, kI, kD, kF
         // TODO FIGURE THE PID OUT TOO, using Cranberry Alarm's initial values for now
 
-        public static final double MAX_PERCENT_SPEED = 0.85;
+        public static final double MAX_PERCENT_SPEED = 0.05;
         public static final double MAX_VELOCITY = 0.00005;
         public static final double MAX_ACCELERATION = 2.0;
         public static final double RAMP_RATE = 20.0;
@@ -213,7 +213,7 @@ public class Constants {
         public static final double MAX_ACCELERATION = 105;
         public static final double RAMP_RATE = 20.0;
 
-        public static final double PROXIMITY_THRESHOLD = 170.0; // TODO tweak this
+        public static final double PROXIMITY_THRESHOLD = 150.0; // TODO tweak this
         // public static final double BLUE_THRESHOLD = 200.0; // TODO tweak this
 
     }

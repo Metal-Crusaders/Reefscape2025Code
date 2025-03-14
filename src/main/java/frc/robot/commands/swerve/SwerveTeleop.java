@@ -31,7 +31,7 @@ public class SwerveTeleop extends Command {
         
         // Initialize the PID controller for rotation
         // TODO CUSTOMIZE THIS!
-        rotationPID = new PIDController(3.0, 0.0, 0.2); // Tuned PID gains
+        rotationPID = new PIDController(5.0, 0.0, 0.3); // Tuned PID gains
         rotationPID.setTolerance(0.01); // Tolerance for stopping rotation
         rotationPID.setIntegratorRange(-Math.PI, Math.PI);
 
@@ -127,9 +127,9 @@ public class SwerveTeleop extends Command {
                 Constants.AutoDriveConstants.BLUE_CORAL_STATION_POSES : Constants.AutoDriveConstants.RED_CORAL_STATION_POSES).getRotation().getRadians();
         } else if (controller.b().getAsBoolean()) {
             return ((DriverStation.getAlliance().get().compareTo(DriverStation.Alliance.Blue) == 0) ? -90 : 90) * Math.PI / 180.0;
-        } // else if (controller.a().getAsBoolean()) {
-        //     return (90) * Math.PI / 180.0;
-        // }
+        } else if (controller.a().getAsBoolean()) {
+            return (-90) * Math.PI / 180.0;
+        }
         return 1e9; // No snap requested
     }
 

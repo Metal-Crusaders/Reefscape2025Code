@@ -43,28 +43,34 @@ import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
-public class TwoL3AlgaeAutoProcessorSide extends SequentialCommandGroup {
+public class L2AndTwoL3AutoProcessorSide extends SequentialCommandGroup {
 
-    public TwoL3AlgaeAutoProcessorSide(CommandSwerveDrivetrain swerve, Elevator elevator, AlgaeClaw algaeClaw, AlgaePivot algaePivot, CoralShooter coralShooter) {
+    public L2AndTwoL3AutoProcessorSide(CommandSwerveDrivetrain swerve, Elevator elevator, AlgaeClaw algaeClaw, AlgaePivot algaePivot, CoralShooter coralShooter) {
 
         // drive from start to L3
-        Command resetPose = new InstantCommand(), startToL3, l3ToCoralStation, coralStationToL3, l3ToProcessor;
+        Command resetPose = new InstantCommand(), startToL2, l2ToCoralStation, coralStationToL3, l3ToCoralStation, coralStationToL32;
         Pose2d startingPose;
         try {
-            startToL3 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("StartingToL3ProcessorSide"));
+            startToL2 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("StartingToL2ProcessorSide"));
             if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
-                startingPose = PathPlannerPath.fromPathFile("StartingToL3ProcessorSide").getStartingHolonomicPose().get();
+                startingPose = PathPlannerPath.fromPathFile("StartingToL2ProcessorSide").getStartingHolonomicPose().get();
                 resetPose = new InstantCommand(() -> swerve.resetPose(startingPose), swerve);
             } else {
-                startingPose = PathPlannerPath.fromPathFile("StartingToL3ProcessorSide").flipPath().getStartingHolonomicPose().get();
+                startingPose = PathPlannerPath.fromPathFile("StartingToL2ProcessorSide").flipPath().getStartingHolonomicPose().get();
                 resetPose = new InstantCommand(() -> swerve.resetPose(startingPose), swerve);
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            startToL3 = null; // or handle the error appropriately
+            startToL2 = null; // or handle the error appropriately
         }
         try {
-            l3ToCoralStation = swerve.driveAlongPath(PathPlannerPath.fromPathFile("L3ToCoralStationProcessorSide"));
+            l2ToCoralStation = swerve.driveAlongPath(PathPlannerPath.fromPathFile("L2ToCoralStationProcessorSide"));
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            l2ToCoralStation = null; // or handle the error appropriately
+        }
+        try {
+            l3ToCoralStation = swerve.driveAlongPath(PathPlannerPath.fromPathFile("L3ToCoralStationProcessorSideWithAlgae"));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             l3ToCoralStation = null; // or handle the error appropriately
@@ -76,10 +82,10 @@ public class TwoL3AlgaeAutoProcessorSide extends SequentialCommandGroup {
             coralStationToL3 = null; // or handle the error appropriately
         }
         try {
-            l3ToProcessor = swerve.driveAlongPath(PathPlannerPath.fromPathFile("L3ToProcessor"));
+            coralStationToL32 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("CoralStationToL3ProcessorSide"));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            l3ToProcessor = null; // or handle the error appropriately
+            coralStationToL32 = null; // or handle the error appropriately
         }
 
         addRequirements(
@@ -93,20 +99,19 @@ public class TwoL3AlgaeAutoProcessorSide extends SequentialCommandGroup {
         addCommands(
             resetPose,
             new ParallelCommandGroup(
-                startToL3,
+                startToL2,
                 new IntakeCoralFull(coralShooter)
             ),
-            new CloseDriveToClosestReefGoodOffset(swerve),
             // L3 coroutine
             new ParallelCommandGroup(
                 new AutoLineUpReefUniversal(swerve, 1),
-                new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS)
+                new ElevatorPreset(elevator, Constants.ElevatorConstants.L2_ENCODER_TICKS)
             ),
             new ScoreCoral(coralShooter),
             // l3 to coral station
             new ParallelCommandGroup(
                 new RestMode(elevator, algaePivot, algaeClaw),
-                l3ToCoralStation
+                l2ToCoralStation
             ),
             new IntakeCoralFull(coralShooter), // coral station coroutine
             // low algae coroutine
@@ -123,14 +128,27 @@ public class TwoL3AlgaeAutoProcessorSide extends SequentialCommandGroup {
                 new GrabAlgae(algaeClaw)
             ),
             new ScoreCoral(coralShooter),
-            new CloseDriveToClosestAlgaeOffset(swerve),
+            // rest of the path
             new ParallelCommandGroup(
-                new CloseDriveToClosestAlgaeOffset(swerve),
-                new ElevatorPreset(elevator, Constants.ElevatorConstants.PROCESSOR_ALGAE_TICKS),
-                new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS)
+                l3ToCoralStation,
+                new SequentialCommandGroup(
+                    new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS),
+                    new ElevatorPreset(elevator, Constants.ElevatorConstants.PROCESSOR_ALGAE_TICKS),
+                    new WaitCommand(0.2),
+                    new ProcessAlgae(elevator, algaePivot, algaeClaw)
+                )
             ),
-            l3ToProcessor,
-            new ProcessAlgae(elevator, algaePivot, algaeClaw)
+            new IntakeCoralFull(coralShooter),
+            new ParallelCommandGroup(
+                coralStationToL32,
+                new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS)
+            ),
+            new AutoLineUpReefUniversal(swerve, 0),
+            new ScoreCoralL1(coralShooter),
+            new ParallelCommandGroup(
+                new CloseDriveToClosestReefGoodOffset(swerve),
+                new RestMode(elevator, algaePivot, algaeClaw)
+            )
         );
 
     }

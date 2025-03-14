@@ -41,10 +41,12 @@ import frc.robot.commands.swerve.CloseDriveToClosestReefGoodOffset;
 import frc.robot.commands.swerve.CloseDriveToPose;
 import frc.robot.commands.swerve.SwerveTeleopShortTerm;
 import frc.robot.commands.utils.JoystickInterruptible;
-import frc.robot.commands.auto.center.CenterL3AndProcessAuto;
+import frc.robot.commands.auto.center.CenterL3AndDoubleProcessAuto;
 import frc.robot.commands.auto.center.TestAlgaeL3Auto;
+import frc.robot.commands.auto.openSide.L2AndTwoL3AutoOpenSide;
 import frc.robot.commands.auto.openSide.TwoL3AndL2AutoOpenSide;
 import frc.robot.commands.auto.openSide.TwoL3BuddyAutoOpenSide;
+import frc.robot.commands.auto.processorSide.L2AndTwoL3AutoProcessorSide;
 import frc.robot.commands.auto.processorSide.TwoL3AlgaeAutoProcessorSide;
 import frc.robot.commands.auto.processorSide.TwoL3AndL2AutoProcessorSide;
 import frc.robot.commands.coroutines.*;
@@ -105,7 +107,7 @@ public class RobotContainer {
     // elevator commands
     // private final Command elevatorTeleop = new ElevatorTeleop(elevator, operatorController);
     private final ElevatorPreset restMode = new ElevatorPreset(elevator, Constants.ElevatorConstants.L1_ENCODER_TICKS);
-    private final ElevatorPreset test1ElePreset = new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS);
+    private final ElevatorPreset test1ElePreset = new ElevatorPreset(elevator, Constants.ElevatorConstants.L2_ENCODER_TICKS);
 
     // coral shooter
     private final Command intakeCoral = new IntakeCoralFull(coralShooter);
@@ -207,16 +209,16 @@ public class RobotContainer {
 
     private void initializeAutoCommands() {
         // auto commands
-        final Command centerL3ProcessAlgaeAuto = new CenterL3AndProcessAuto(drivetrain, elevator, coralShooter, algaeClaw, algaePivot);
+        final Command centerL3ProcessAlgaeAuto = new CenterL3AndDoubleProcessAuto(drivetrain, elevator, coralShooter, algaeClaw, algaePivot);
         final Command twoL3AlgaeAutoProcessorSide = new TwoL3AlgaeAutoProcessorSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
-        final Command twoL3AndL2ProcessorSide = new TwoL3AndL2AutoProcessorSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
+        final Command twoL3AndL2ProcessorSide = new L2AndTwoL3AutoProcessorSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
         final Command twoL3BumpOpenSide = new TwoL3BuddyAutoOpenSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
-        final Command twoL3AndL2OpenSide = new TwoL3AndL2AutoOpenSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
+        final Command twoL3AndL2OpenSide = new L2AndTwoL3AutoOpenSide(drivetrain, elevator, algaeClaw, algaePivot, coralShooter);
 
         // autoselector
         autoSelector = new SendableChooser<>();
         autoSelector.setDefaultOption("No Auto", new InstantCommand(() -> drivetrain.resetPose(drivetrain.getState().Pose), drivetrain));
-        autoSelector.addOption("L3 + Process Algae Auto - Center", centerL3ProcessAlgaeAuto);
+        autoSelector.addOption("L3 + Double Process Algae Auto - Center", centerL3ProcessAlgaeAuto);
         autoSelector.addOption("Two L3 Process Algae Auto - Processor Side", twoL3AlgaeAutoProcessorSide);
         autoSelector.addOption("Two L3 + L2 Auto - Processor Side", twoL3AndL2ProcessorSide);
         autoSelector.addOption("Two L3 + L2 - Open Side", twoL3AndL2OpenSide);

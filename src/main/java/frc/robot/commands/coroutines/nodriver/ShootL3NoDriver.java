@@ -40,10 +40,8 @@ public class ShootL3NoDriver extends SequentialCommandGroup {
 
         addCommands(
             new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
-            new ParallelDeadlineGroup(
-                new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0))
-            ),
             new ParallelCommandGroup(
+                new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
                 new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS)
             ),
             new ScoreCoral(coralShooter),

@@ -11,6 +11,7 @@ import frc.robot.commands.elevator.ElevatorPreset;
 import frc.robot.commands.scoring.coral.ScoreCoral;
 import frc.robot.commands.swerve.AutoLineUpReefUniversal;
 import frc.robot.commands.swerve.CloseDriveToClosestReef;
+import frc.robot.commands.swerve.CloseDriveToClosestReefGoodOffset;
 import frc.robot.commands.swerve.CloseDriveToPose;
 import frc.robot.commands.swerve.SwerveTeleopShortTerm;
 import frc.robot.commands.utils.ConditionalAllianceCommand;
@@ -35,8 +36,9 @@ public class ShootL2NoDriver extends SequentialCommandGroup {
         );
 
         addCommands(
-            new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
+            new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
             new ParallelCommandGroup(
+                new AutoLineUpReefUniversal(swerveDrivetrain, (right ? 1 : 0)),
                 new ElevatorPreset(elevator, Constants.ElevatorConstants.L2_ENCODER_TICKS)
             ),
             new ScoreCoral(coralShooter),
