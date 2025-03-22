@@ -12,7 +12,7 @@ import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.commands.coroutines.RestMode;
 import frc.robot.commands.scoring.coral.ScoreCoralL1;
-import frc.robot.commands.swerve.AutoLineUpReef;
+
 import frc.robot.commands.swerve.AutoLineUpReefUniversal;
 import frc.robot.commands.swerve.CloseDriveToPose;
 import frc.robot.commands.utils.ConditionalAllianceCommand;

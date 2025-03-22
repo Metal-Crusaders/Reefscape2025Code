@@ -13,9 +13,9 @@ import frc.robot.commands.scoring.algae.AlgaePivotPreset;
 import frc.robot.commands.scoring.algae.GrabAlgae;
 import frc.robot.commands.scoring.algae.GrabAlgaeTime;
 import frc.robot.commands.scoring.coral.ScoreCoral;
-import frc.robot.commands.swerve.AutoLineUpReef;
+
 import frc.robot.commands.swerve.AutoLineUpReefUniversal;
-import frc.robot.commands.swerve.CloseDriveToClosestReef;
+import frc.robot.commands.swerve.CloseDriveToClosestReefGoodOffset;
 import frc.robot.commands.swerve.CloseDriveToPose;
 import frc.robot.commands.swerve.SwerveTeleopShortTerm;
 import frc.robot.commands.utils.ConditionalAllianceCommand;
@@ -41,7 +41,7 @@ public class HighAlgaeGrabED extends SequentialCommandGroup {
 
         addCommands(
             new ParallelCommandGroup(
-                new CloseDriveToClosestReef(swerveDrivetrain),
+                new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
                 new ElevatorPreset(elevator, Constants.ElevatorConstants.HIGH_ALGAE_ENCODER_TICKS),
                 new AlgaePivotPreset(algaePivot, Constants.AlgaeClawConstants.PIVOT_OUT_TICKS)
             ),
@@ -50,7 +50,7 @@ public class HighAlgaeGrabED extends SequentialCommandGroup {
                 new GrabAlgae(algaeClaw)
             ),
             new ParallelCommandGroup(
-                new CloseDriveToClosestReef(swerveDrivetrain),
+                new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
                 new GrabAlgaeTime(algaeClaw, 2)
             ),
             new ElevatorPreset(elevator, Constants.ElevatorConstants.L3_ENCODER_TICKS),
@@ -58,7 +58,7 @@ public class HighAlgaeGrabED extends SequentialCommandGroup {
             new SwerveTeleopShortTerm(swerveDrivetrain, driverController),
             new ScoreCoral(coralShooter),
             new ParallelCommandGroup(
-                new CloseDriveToClosestReef(swerveDrivetrain),
+                new CloseDriveToClosestReefGoodOffset(swerveDrivetrain),
                 new RestMode(elevator, algaePivot, algaeClaw)
             )
         );

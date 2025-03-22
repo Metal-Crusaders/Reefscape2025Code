@@ -89,5 +89,6 @@ public class AlgaePivot extends SubsystemBase {
 
         SmartDashboard.putNumber("Pivot Setpoint", setpointTicks);
         SmartDashboard.putNumber("Pivot Current Position", currentState.position);
+        SmartDashboard.putNumber("Pivot Error", this.pivotMotor.getClosedLoopController().getIAccum());
     }
 }

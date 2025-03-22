@@ -36,17 +36,23 @@ public class TwoL3BuddyAutoOpenSide extends SequentialCommandGroup {
     public TwoL3BuddyAutoOpenSide(CommandSwerveDrivetrain swerve, Elevator elevator, AlgaeClaw algaeClaw, AlgaePivot algaePivot, CoralShooter coralShooter) {
 
         // drive from start to L3
-        Command resetPose = new InstantCommand(), startToL3, l3ToCoralStation, coralStationToL3, l3ToBump;
+        Command resetPose = new InstantCommand(), buddyBump, startToL3, l3ToCoralStation, coralStationToL3, l3ToBump;
         Pose2d startingPose;
         try {
-            startToL3 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("StartingToL3OpenSide"));
+            buddyBump = swerve.driveAlongPath(PathPlannerPath.fromPathFile("BuddyBumpOpenSide"));
             if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
-                startingPose = PathPlannerPath.fromPathFile("StartingToL3OpenSide").getStartingHolonomicPose().get();
+                startingPose = PathPlannerPath.fromPathFile("BuddyBumpOpenSide").getStartingHolonomicPose().get();
                 resetPose = new InstantCommand(() -> swerve.resetPose(startingPose), swerve);
             } else {
-                startingPose = PathPlannerPath.fromPathFile("StartingToL3OpenSide").flipPath().getStartingHolonomicPose().get();
+                startingPose = PathPlannerPath.fromPathFile("BuddyBumpOpenSide").flipPath().getStartingHolonomicPose().get();
                 resetPose = new InstantCommand(() -> swerve.resetPose(startingPose), swerve);
             }
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            buddyBump = null; // or handle the error appropriately
+        }
+        try {
+            startToL3 = swerve.driveAlongPath(PathPlannerPath.fromPathFile("StartingToL3OpenSide"));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
             startToL3 = null; // or handle the error appropriately
@@ -81,7 +87,10 @@ public class TwoL3BuddyAutoOpenSide extends SequentialCommandGroup {
         addCommands(
             resetPose,
             new ParallelCommandGroup(
-                startToL3,
+                new SequentialCommandGroup(
+                    buddyBump,
+                    startToL3
+                ),
                 new IntakeCoralFull(coralShooter)
             ),
             new ShootL3NoDriver(true, swerve, elevator, coralShooter, algaePivot, algaeClaw), // L3 coroutine

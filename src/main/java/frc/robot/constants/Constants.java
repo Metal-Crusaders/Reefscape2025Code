@@ -58,7 +58,7 @@ public class Constants {
         public static final double ROTATION_PP_KI = 0.0;
         public static final double ROTATION_PP_KD = 0.0;
 
-        public static final double CLOSE_TRANSLATION_PP_KP = 2.7;
+        public static final double CLOSE_TRANSLATION_PP_KP = 2.5;
         public static final double CLOSE_TRANSLATION_PP_KI = 0.0;
         public static final double CLOSE_TRANSLATION_PP_KD = 0.0;
 
@@ -87,34 +87,15 @@ public class Constants {
 
         // BLUE_REEF_POSES array for ID 17 through 22
         public static final Pose2d[] BLUE_REEF_POSES = new Pose2d[] {
-            new Pose2d(3.9121936574811764, 2.696855993453582, new Rotation2d(1.0471975511965974)), // ID 17
-            new Pose2d(3.0533336574811782, 3.8586759934535824, new Rotation2d(0.0)), // ID 18
             new Pose2d(3.6313519999999997, 5.182639999999999, new Rotation2d(-1.0471975511965979)), // ID 19
-            new Pose2d(5.066452342518822, 5.344784006546417, new Rotation2d(-2.0943951023931957)), // ID 20
+            new Pose2d(3.0533336574811782, 3.8586759934535824, new Rotation2d(0.0)), // ID 18
+            new Pose2d(3.9121936574811764, 2.696855993453582, new Rotation2d(1.0471975511965974)), // ID 17
+            new Pose2d(5.347293999999999, 2.859, new Rotation2d(2.0943951023931957)), // ID 22
             new Pose2d(5.925312342518822, 4.182964006546419, new Rotation2d(3.141592653589793)), // ID 21
-            new Pose2d(5.347293999999999, 2.859, new Rotation2d(2.0943951023931957)) // ID 22
-        };
-
-
-        public static final Pose2d[][] BLUE_UNIQUE_POSES = {
-            {new Pose2d(3.317, 4.250, new Rotation2d(   0 * Math.PI / 180.0)), new Pose2d(3.317, 3.707, new Rotation2d(   0 * Math.PI / 180.0))},
-            {new Pose2d(3.842, 2.857, new Rotation2d(  60 * Math.PI / 180.0)), new Pose2d(4.079, 2.672, new Rotation2d(  60 * Math.PI / 180.0))},
-            {new Pose2d(5.106, 2.803, new Rotation2d( 120 * Math.PI / 180.0)), new Pose2d(5.416, 2.948, new Rotation2d( 120 * Math.PI / 180.0))},
-            {new Pose2d(5.850, 3.705, new Rotation2d( 180 * Math.PI / 180.0)), new Pose2d(5.850, 4.259, new Rotation2d( 180 * Math.PI / 180.0))},
-            {new Pose2d(5.224, 5.148, new Rotation2d(-120 * Math.PI / 180.0)), new Pose2d(4.881, 5.412, new Rotation2d(-120 * Math.PI / 180.0))},
-            {new Pose2d(3.857, 5.206, new Rotation2d( -60 * Math.PI / 180.0)), new Pose2d(3.507, 5.061, new Rotation2d( -60 * Math.PI / 180.0))}
+            new Pose2d(5.066452342518822, 5.344784006546417, new Rotation2d(-2.0943951023931957)) // ID 20
         };
 
         public static final double RED_OFFSET = 8.58;
-
-        public static final Pose2d[][] RED_UNIQUE_POSES = {
-            {new Pose2d(3.117 + RED_OFFSET, 4.050, new Rotation2d(   0 * Math.PI / 180.0)), new Pose2d(3.117 + 8.553921, 3.707, new Rotation2d(   0 * Math.PI / 180.0))},
-            {new Pose2d(3.842 + RED_OFFSET, 2.857, new Rotation2d(  60 * Math.PI / 180.0)), new Pose2d(4.079 + 8.553921, 2.672, new Rotation2d(  60 * Math.PI / 180.0))},
-            {new Pose2d(5.106 + RED_OFFSET, 2.803, new Rotation2d( 120 * Math.PI / 180.0)), new Pose2d(5.416 + 8.553921, 2.948, new Rotation2d( 120 * Math.PI / 180.0))},
-            {new Pose2d(5.850 + RED_OFFSET, 3.705, new Rotation2d( 180 * Math.PI / 180.0)), new Pose2d(5.850 + 8.553921, 4.259, new Rotation2d( 180 * Math.PI / 180.0))},
-            {new Pose2d(5.224 + RED_OFFSET, 5.148, new Rotation2d(-120 * Math.PI / 180.0)), new Pose2d(4.881 + 8.553921, 5.412, new Rotation2d(-120 * Math.PI / 180.0))},
-            {new Pose2d(3.857 + RED_OFFSET, 5.206, new Rotation2d( -60 * Math.PI / 180.0)), new Pose2d(3.507 + 8.553921, 5.061, new Rotation2d( -60 * Math.PI / 180.0))}
-        };
 
         public static final Pose2d[] BLUE_CORAL_STATION_POSES = {
             new Pose2d(1.300, 1.000, new Rotation2d(55 * Math.PI / 180.0)),
@@ -127,8 +108,8 @@ public class Constants {
         };
 
         public static final double[][] ADDITIONS = {
-            {0.4, 0.03}, // LEFT ADDITION
-            {0.25, -0.42}  // RIGHT ADDITION
+            {0.26, 0.08}, // LEFT ADDITION
+            {0.26, -0.34}  // RIGHT ADDITION
         };
 
         public static final double[] POSE_ADDITION = {
@@ -159,7 +140,7 @@ public class Constants {
         public static final double L1_ENCODER_TICKS = 0;
         public static final double PROCESSOR_ALGAE_TICKS = 10;
         public static final double L2_ENCODER_TICKS = 13.8095;
-        public static final double L3_ENCODER_TICKS = 42.8095;
+        public static final double L3_ENCODER_TICKS = 43.8095;
         public static final double ALGAE_SPOKE_OFFSET = 27;
         public static final double LOW_ALGAE_ENCODER_TICKS = L2_ENCODER_TICKS + ALGAE_SPOKE_OFFSET;
         public static final double HIGH_ALGAE_ENCODER_TICKS = 41.8095 + ALGAE_SPOKE_OFFSET;
@@ -168,7 +149,7 @@ public class Constants {
         public static final double[] ELEVATOR_PID = {0.1, 0, 0, 0.0}; // kP, kI, kD, kF
         // TODO FIGURE THE PID OUT TOO, using Cranberry Alarm's initial values for now
 
-        public static final double MAX_PERCENT_SPEED = 0.05;
+        public static final double MAX_PERCENT_SPEED = 0.85;
         public static final double MAX_VELOCITY = 0.00005;
         public static final double MAX_ACCELERATION = 2.0;
         public static final double RAMP_RATE = 20.0;
@@ -182,7 +163,8 @@ public class Constants {
         public static final int CORAL_LEFT = 13;
         public static final int CORAL_RIGHT = 14;
 
-        public static final boolean LEFT_INVERTED = true;
+        public static final boolean LEFT_INVERTED = false;
+        public static final boolean RIGHT_INVERTED = false;
 
         public static final double RAMP_RATE = 20.0;
 
@@ -199,12 +181,12 @@ public class Constants {
         public static final boolean CLAW_INVERTED = false; 
         public static final boolean PIVOT_INVERTED = false; 
 
-        public static final double[] PIVOT_PID = {0.6 / 800.0, 0.0, 0, 0.0}; // kP, kI, kD, kF
+        public static final double[] PIVOT_PID = {0.7 / 950.0, 0.0, 0, 0.0}; // kP, kI, kD, kF
         // TODO preset PID stuff!
 
         // TODO figure this out too
         public static final double PIVOT_IN_TICKS = 100.0;
-        public static final double PIVOT_OUT_TICKS = 850.97725;
+        public static final double PIVOT_OUT_TICKS = 950.97725;
         public static final double PIVOT_TICKS_DEADBAND = 50.0;
 
         public static final double CURRENT_MAX = 30.0; // TEST
@@ -232,7 +214,7 @@ public class Constants {
         public static final String CAMERA_2_NAME = "testCam";
 
         public static final Transform3d CAMERA_2_POS = new Transform3d(
-            new Translation3d(0.3282442, 0.1129792, -0.0508), // forward from center, up from center, right from center
+            new Translation3d(0.3282442, 0.1129792, -0.0635), // forward from center, up from center, right from center
             new Rotation3d(0, 20.0 * Math.PI / 180.0, 0) // 0 0 0 is facing forward, positive rotates that axis clockwise
         );
 

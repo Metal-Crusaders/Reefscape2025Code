@@ -27,7 +27,7 @@ public class AlgaeClaw extends SubsystemBase {
     private static final double PULSE_TIME = 0.2;
     private static final double PULSE_SPEED = -0.4;
 
-    private static final double PASSIVE_HOLD = -0.05;
+    private static final double PASSIVE_HOLD = -0.1;
 
     public boolean currentlyUsed = false;
     

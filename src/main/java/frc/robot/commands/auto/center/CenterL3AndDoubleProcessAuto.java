@@ -78,9 +78,9 @@ public class CenterL3AndDoubleProcessAuto extends SequentialCommandGroup {
 
         addCommands(
             resetPose,
-            new ParallelCommandGroup(
-                new IntakeCoralFull(coralShooter),
-                startToL3
+            new ParallelDeadlineGroup(
+                startToL3,
+                new IntakeCoralFull(coralShooter)
             ),
             new LowAlgaeGrabNoDriver(swerve, elevator, coralShooter, algaePivot, algaeClaw),
             l3ToProcessor,

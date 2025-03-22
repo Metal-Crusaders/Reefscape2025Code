@@ -34,7 +34,6 @@ import frc.robot.commands.scoring.coral.ScoreCoral;
 import frc.robot.commands.scoring.coral.ScoreCoralL1;
 import frc.robot.commands.swerve.AutoLineUpReefUniversal;
 import frc.robot.commands.swerve.CloseDriveToClosestAlgaeOffset;
-import frc.robot.commands.swerve.CloseDriveToClosestReef;
 import frc.robot.commands.swerve.CloseDriveToClosestReefGoodOffset;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.elevator.Elevator;

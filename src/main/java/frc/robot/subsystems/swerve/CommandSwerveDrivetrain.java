@@ -12,8 +12,11 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.pathfinding.Pathfinder;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.math.Matrix;
@@ -23,6 +26,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,7 +59,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /** Swerve request to apply during robot-centric path following */
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
-    private final PathConstraints constraints = new PathConstraints(Constants.SwerveConstants.MAX_LINEAR_VELOCITY, Constants.SwerveConstants.MAX_LINEAR_ACCELERATION, Constants.SwerveConstants.MAX_ANGULAR_VELOCITY, Constants.SwerveConstants.MAX_ANGULAR_ACCELERATION);
+    public final PathConstraints constraints = new PathConstraints(Constants.SwerveConstants.MAX_LINEAR_VELOCITY, Constants.SwerveConstants.MAX_LINEAR_ACCELERATION, Constants.SwerveConstants.MAX_ANGULAR_VELOCITY, Constants.SwerveConstants.MAX_ANGULAR_ACCELERATION);
+    public final PPHolonomicDriveController driveController = new PPHolonomicDriveController(
+        // PID constants for translation
+        new PIDConstants(Constants.SwerveConstants.TRANSLATION_PP_KP, Constants.SwerveConstants.TRANSLATION_PP_KI, Constants.SwerveConstants.TRANSLATION_PP_KD),
+        // PID constants for rotation
+        new PIDConstants(Constants.SwerveConstants.ROTATION_PP_KP, Constants.SwerveConstants.ROTATION_PP_KI, Constants.SwerveConstants.ROTATION_PP_KD)
+    );
+    public Pathfinder pathfinder;
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
@@ -201,7 +212,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private void configureAutoAndVision() {
 
         // poseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getState().RawHeading, getState().ModulePositions, getState().Pose);
-
+        pathfinder = new KarthikADStarPathing();
         try {
             var config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
@@ -214,12 +225,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                         .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())
                 ),
-                new PPHolonomicDriveController(
-                    // PID constants for translation
-                    new PIDConstants(Constants.SwerveConstants.TRANSLATION_PP_KP, Constants.SwerveConstants.TRANSLATION_PP_KI, Constants.SwerveConstants.TRANSLATION_PP_KD),
-                    // PID constants for rotation
-                    new PIDConstants(Constants.SwerveConstants.ROTATION_PP_KP, Constants.SwerveConstants.ROTATION_PP_KI, Constants.SwerveConstants.ROTATION_PP_KD)
-                ),
+                driveController,
                 config,
                 // Assume the path needs to be flipped for Red vs Blue, this is normally the case
                 () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
@@ -258,6 +264,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             DriverStation.reportError("Failed to load PathPlanner config and configure path-on-the-fly generation", e.getStackTrace());
             return null;
         }
+     }
+
+     public PathPlannerPath pathfind(Pose2d endPose) {
+        
+        pathfinder.setStartPosition(getState().Pose.getTranslation());
+        pathfinder.setGoalPosition(endPose.getTranslation());
+
+        PathPlannerPath path = pathfinder.getCurrentPath(constraints, new GoalEndState(0, endPose.getRotation()));
+
+        return path;
      }
 
      public Command driveToPose(double goX, double goY, double heading) {

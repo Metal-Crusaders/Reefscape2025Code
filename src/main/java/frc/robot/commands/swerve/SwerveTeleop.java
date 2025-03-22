@@ -18,7 +18,7 @@ public class SwerveTeleop extends Command {
 
     private static final double MAX_TRANSLATION_SPEED = 3.0; // meters per second
     private static final double MAX_ROTATION_SPEED = Math.PI; // radians per second
-    private static final double DEADBAND = 0.15;
+    private static final double DEADBAND = 0.11;
 
     private double targetAngle, prevTargetAngle = 0;
 

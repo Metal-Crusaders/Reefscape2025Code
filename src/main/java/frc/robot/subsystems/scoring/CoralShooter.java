@@ -35,7 +35,7 @@ public class CoralShooter extends SubsystemBase {
         leftConfig.closedLoopRampRate(CoralShooterConstants.RAMP_RATE);
 
         SparkMaxConfig rightConfig = new SparkMaxConfig();
-        rightConfig.inverted(!Constants.CoralShooterConstants.LEFT_INVERTED).idleMode(IdleMode.kBrake);
+        rightConfig.inverted(Constants.CoralShooterConstants.RIGHT_INVERTED).idleMode(IdleMode.kBrake);
         rightConfig.encoder.positionConversionFactor(420).velocityConversionFactor(420);
         rightConfig.closedLoopRampRate(CoralShooterConstants.RAMP_RATE);
         

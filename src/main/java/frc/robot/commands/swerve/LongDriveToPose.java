@@ -1,5 +1,6 @@
 package frc.robot.commands.swerve;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.utils.ConditionalAllianceCommand;
@@ -7,10 +8,10 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.MathUtils;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 
-public class DriveToClosestReef extends SequentialCommandGroup {
+public class LongDriveToPose extends SequentialCommandGroup {
 
     private CommandSwerveDrivetrain swerve;
-    public DriveToClosestReef(CommandSwerveDrivetrain swerve) {
+    public LongDriveToPose(CommandSwerveDrivetrain swerve, Pose2d finalPose) {
 
         this.swerve = swerve;
 
@@ -19,10 +20,7 @@ public class DriveToClosestReef extends SequentialCommandGroup {
         // Add conditional logic to choose commands
         addCommands(
             new DeferredCommand(
-                () -> (new ConditionalAllianceCommand(
-                    this.swerve.driveToPose(MathUtils.findClosestTarget(this.swerve.getState().Pose, Constants.AutoDriveConstants.BLUE_REEF_POSES)),
-                    this.swerve.driveToPose(MathUtils.findClosestTarget(this.swerve.getState().Pose, Constants.AutoDriveConstants.RED_REEF_POSES))
-                )),
+                () -> this.swerve.driveToPose(finalPose),
                 getRequirements()
             )
         );

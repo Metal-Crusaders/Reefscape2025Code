@@ -64,11 +64,6 @@ public class AprilTagCamera extends SubsystemBase {
                 SmartDashboard.putNumber("Target Count", result.targets.size());
 
                 for (PhotonTrackedTarget target : result.targets) {
-                    SmartDashboard.putNumber("Target ID", target.getFiducialId());
-                    SmartDashboard.putNumber("Yaw", target.getYaw());
-                    SmartDashboard.putNumber("Pitch", target.getPitch());
-                    SmartDashboard.putNumber("Area", target.getArea());
-
                     if (DriverStation.getAlliance().get() == DriverStation.Alliance.Blue) {
                         for (int tag : Constants.AutoDriveConstants.GOOD_BLUE_APRIL_TAGS) {
                             if (target.getFiducialId() == tag) {
