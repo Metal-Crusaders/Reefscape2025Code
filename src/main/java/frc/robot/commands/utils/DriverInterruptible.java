@@ -12,7 +12,7 @@ public class DriverInterruptible extends SequentialCommandGroup {
         // Create an InstantCommand that ends when the joystick is moved
         Command monitorJoystick = new RunCommand(() -> {
             // This can be expanded for finer control
-            if (xbox.a().getAsBoolean()) {
+            if (xbox.leftBumper().getAsBoolean()) {
                 // The joystick has moved; the command will end
                 this.cancel();
             }

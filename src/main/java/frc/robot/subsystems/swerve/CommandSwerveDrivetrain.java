@@ -1,7 +1,11 @@
 package frc.robot.subsystems.swerve;
 
 import static edu.wpi.first.units.Units.*;
+
+import java.io.IOException;
 import java.util.function.Supplier;
+
+import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
@@ -17,6 +21,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinder;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import com.pathplanner.lib.util.FileVersionException;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.math.Matrix;
@@ -34,12 +39,14 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.constants.Constants;
 import frc.robot.constants.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.subsystems.util.KarthikADStarPathing;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
  * Subsystem so it can easily be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -264,9 +271,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             DriverStation.reportError("Failed to load PathPlanner config and configure path-on-the-fly generation", e.getStackTrace());
             return null;
         }
-     }
+    }
 
-     public PathPlannerPath pathfind(Pose2d endPose) {
+    public PathPlannerPath pathfind(Pose2d endPose) {
         
         pathfinder.setStartPosition(getState().Pose.getTranslation());
         pathfinder.setGoalPosition(endPose.getTranslation());
@@ -274,22 +281,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         PathPlannerPath path = pathfinder.getCurrentPath(constraints, new GoalEndState(0, endPose.getRotation()));
 
         return path;
-     }
+    }
 
-     public Command driveToPose(double goX, double goY, double heading) {
-        Pose2d endPose = new Pose2d(goX, goY, new Rotation2d(heading * Math.PI / 180.0));
-
-        Command pathfindingCommand = AutoBuilder.pathfindToPose(
-            endPose,
-            constraints,
-            0.0 // Goal end velocity in meters/sec
-        );
-
-        return pathfindingCommand;
-     }
-
-     public Command driveToPose(Pose2d endPose) {
-        PathConstraints constraints = new PathConstraints(3, 3, 2 * Math.PI, 4 * Math.PI);
+    public Command driveToPose(double goX, double goY, double degreeHeading) {
+        Pose2d endPose = new Pose2d(goX, goY, new Rotation2d(degreeHeading * Math.PI / 180.0));
 
         Command pathfindingCommand = AutoBuilder.pathfindToPose(
             endPose,
@@ -298,7 +293,45 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         );
 
         return pathfindingCommand;
-     }
+    }
+
+    public Command driveToPose(Pose2d endPose) {
+
+        Command pathfindingCommand = AutoBuilder.pathfindToPose(
+            endPose,
+            constraints,
+            0.0 // Goal end velocity in meters/sec
+        );
+
+        return pathfindingCommand;
+    }
+
+    public Command reefDriveToPose(int reefNum, boolean leftSide) {
+
+        PathPlannerPath approachPath = null;
+        try {
+            approachPath = PathPlannerPath.fromPathFile(String.format("ID%dFrom%s", reefNum, leftSide ? "Left" : "Right"));
+        } catch (FileVersionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        Command pathfindingCommand = AutoBuilder.pathfindThenFollowPath(
+            approachPath,
+            constraints
+        );
+
+        return pathfindingCommand;
+    }
+
+    
+
 
     /**
      * Returns a command that applies the specified control request to this swerve drivetrain.

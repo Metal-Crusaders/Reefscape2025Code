@@ -7,8 +7,8 @@ public class IntakeCoral extends Command {
 
     private CoralShooter coralShooter;
 
-    private final double INTAKE_SPEED_LEFT = 0.7;
-    private final double INTAKE_SPEED_RIGHT = 0.35;
+    private final double INTAKE_SPEED_LEFT = 0.5;
+    private final double INTAKE_SPEED_RIGHT = 0.25;
 
     public IntakeCoral(CoralShooter coralShooter) {
 

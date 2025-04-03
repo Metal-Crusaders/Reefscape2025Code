@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 
 public class Constants {
@@ -58,13 +59,17 @@ public class Constants {
         public static final double ROTATION_PP_KI = 0.0;
         public static final double ROTATION_PP_KD = 0.0;
 
-        public static final double CLOSE_TRANSLATION_PP_KP = 2.5;
+        public static final double CLOSE_TRANSLATION_PP_KP = 1.5;
         public static final double CLOSE_TRANSLATION_PP_KI = 0.0;
         public static final double CLOSE_TRANSLATION_PP_KD = 0.0;
 
         public static final double CLOSE_ROTATION_PP_KP = 2.0;
         public static final double CLOSE_ROTATION_PP_KI = 0.0;
         public static final double CLOSE_ROTATION_PP_KD = 0.0;
+
+        public static final double REEF_ROTATION_PID_KP = 2.0;
+        public static final double REEF_ROTATION_PID_KI = 0.0;
+        public static final double REEF_ROTATION_PID_KD = 0.0;
 
         public static final double MAX_LINEAR_VELOCITY = 2.5;
         public static final double MAX_LINEAR_ACCELERATION = 2.0;
@@ -85,6 +90,17 @@ public class Constants {
             new Pose2d(12.481645657481177, 2.696855993453582, new Rotation2d(1.0471975511965974)) // ID 11
         };
 
+        public static final Pose2d[][] RED_REEF_NEIGHBORS = new Pose2d[][] {
+            {RED_REEF_POSES[5], RED_REEF_POSES[1]}, // ID 6 -> Left: ID 11, Right: ID 7
+            {RED_REEF_POSES[0], RED_REEF_POSES[2]}, // ID 7 -> Left: ID 6, Right: ID 8
+            {RED_REEF_POSES[1], RED_REEF_POSES[3]}, // ID 8 -> Left: ID 7, Right: ID 9
+            {RED_REEF_POSES[2], RED_REEF_POSES[4]}, // ID 9 -> Left: ID 8, Right: ID 10
+            {RED_REEF_POSES[3], RED_REEF_POSES[5]}, // ID 10 -> Left: ID 9, Right: ID 11
+            {RED_REEF_POSES[4], RED_REEF_POSES[0]}  // ID 11 -> Left: ID 10, Right: ID 6
+        };
+
+        public static final int[] RED_REEF_IDS = {6, 7, 8, 9, 10, 11};
+
         // BLUE_REEF_POSES array for ID 17 through 22
         public static final Pose2d[] BLUE_REEF_POSES = new Pose2d[] {
             new Pose2d(3.6313519999999997, 5.182639999999999, new Rotation2d(-1.0471975511965979)), // ID 19
@@ -94,6 +110,20 @@ public class Constants {
             new Pose2d(5.925312342518822, 4.182964006546419, new Rotation2d(3.141592653589793)), // ID 21
             new Pose2d(5.066452342518822, 5.344784006546417, new Rotation2d(-2.0943951023931957)) // ID 20
         };
+
+        public static final Pose2d[][] BLUE_REEF_NEIGHBORS = new Pose2d[][] {
+            {BLUE_REEF_POSES[5], BLUE_REEF_POSES[1]}, // ID 19 -> Left: ID 20, Right: ID 18
+            {BLUE_REEF_POSES[0], BLUE_REEF_POSES[2]}, // ID 18 -> Left: ID 19, Right: ID 17
+            {BLUE_REEF_POSES[1], BLUE_REEF_POSES[3]}, // ID 17 -> Left: ID 18, Right: ID 22
+            {BLUE_REEF_POSES[2], BLUE_REEF_POSES[4]}, // ID 22 -> Left: ID 17, Right: ID 21
+            {BLUE_REEF_POSES[3], BLUE_REEF_POSES[5]}, // ID 21 -> Left: ID 22, Right: ID 20
+            {BLUE_REEF_POSES[4], BLUE_REEF_POSES[0]}  // ID 20 -> Left: ID 21, Right: ID 19
+        };
+
+        public static final int[] BLUE_REEF_IDS = {19, 18, 17, 22, 21, 20};
+
+        public static final Translation2d BLUE_REEF_CENTER = new Translation2d(4.5, 4.0);
+        public static final Translation2d RED_REEF_CENTER = new Translation2d(13, 4.0);
 
         public static final double RED_OFFSET = 8.58;
 
@@ -108,12 +138,12 @@ public class Constants {
         };
 
         public static final double[][] ADDITIONS = {
-            {0.26, 0.08}, // LEFT ADDITION
-            {0.26, -0.34}  // RIGHT ADDITION
+            {0.4, 0.08}, // LEFT ADDITION
+            {0.42, -0.3}  // RIGHT ADDITION
         };
 
         public static final double[] POSE_ADDITION = {
-            -0.2, 0.0
+            -0.4, 0.0
         };
 
         public static final double[] ALGAE_ADDITION = {
@@ -128,6 +158,17 @@ public class Constants {
             6, 7, 8, 9, 10, 11
         };
 
+        public static final Translation2d[] BORDER_POSES = {
+            new Translation2d(0.000, 1.225),
+            new Translation2d(0.000, 6.800),
+            new Translation2d(1.750, 8.000),
+            new Translation2d(16.000, 8.000),
+            new Translation2d(17.548, 6.800),
+            new Translation2d(17.548, 1.225),
+            new Translation2d(16.000, 0.000),
+            new Translation2d(1.750, 0.000)
+        };
+
     }
 
     public static class ElevatorConstants {
@@ -139,10 +180,10 @@ public class Constants {
 
         public static final double L1_ENCODER_TICKS = 0;
         public static final double PROCESSOR_ALGAE_TICKS = 10;
-        public static final double L2_ENCODER_TICKS = 13.8095;
+        public static final double L2_ENCODER_TICKS = 14.8095;
         public static final double L3_ENCODER_TICKS = 43.8095;
         public static final double ALGAE_SPOKE_OFFSET = 27;
-        public static final double LOW_ALGAE_ENCODER_TICKS = L2_ENCODER_TICKS + ALGAE_SPOKE_OFFSET;
+        public static final double LOW_ALGAE_ENCODER_TICKS = 13.8095 + ALGAE_SPOKE_OFFSET;
         public static final double HIGH_ALGAE_ENCODER_TICKS = 41.8095 + ALGAE_SPOKE_OFFSET;
         public static final double MAX_ENCODER_TICKS = 69;
 
@@ -163,7 +204,7 @@ public class Constants {
         public static final int CORAL_LEFT = 13;
         public static final int CORAL_RIGHT = 14;
 
-        public static final boolean LEFT_INVERTED = false;
+        public static final boolean LEFT_INVERTED = true;
         public static final boolean RIGHT_INVERTED = false;
 
         public static final double RAMP_RATE = 20.0;
@@ -207,15 +248,23 @@ public class Constants {
 
         public static final Transform3d CAMERA_1_POS = new Transform3d(
             new Translation3d(0.2250948, 0.166770812, -0.2268097534), // forward from center, up from center, right from center
-            new Rotation3d(0, 10.0 * Math.PI / 180.0, 45.0 * Math.PI / 180.0) // 0 0 0 is facing forward, positive rotates that axis clockwise
+            new Rotation3d(0, 15.0 * Math.PI / 180.0, 45.0 * Math.PI / 180.0) // 0 0 0 is facing forward, positive rotates that axis clockwise
         );
 
-        // CAMERA TO THE FARTHEST LEFT, photonvision2.local at 10.52.93.12
+        // CAMERA TO THE CENTER, photonvision2.local at 10.52.93.12
         public static final String CAMERA_2_NAME = "testCam";
 
         public static final Transform3d CAMERA_2_POS = new Transform3d(
             new Translation3d(0.3282442, 0.1129792, -0.0635), // forward from center, up from center, right from center
             new Rotation3d(0, 20.0 * Math.PI / 180.0, 0) // 0 0 0 is facing forward, positive rotates that axis clockwise
+        );
+
+        // CAMERA TO THE FARTHEST LEFT, photonvision2.local at 10.52.93.12 (FIGURE THIS OUT)
+        public static final String CAMERA_3_NAME = "testCam3";
+
+        public static final Transform3d CAMERA_3_POS = new Transform3d(
+            new Translation3d(0.2837942, 0.1712214, 0.2446655), // forward from center, up from center, right from center
+            new Rotation3d(0, 15.0 * Math.PI / 180.0, -45.266950 * Math.PI / 180.0) // 0 0 0 is facing forward, positive rotates that axis clockwise
         );
 
     }

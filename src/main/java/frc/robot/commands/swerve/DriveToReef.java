@@ -8,17 +8,18 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.utils.ConditionalAllianceCommand;
+import frc.robot.commands.utils.DisplayImageCommand;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
+import frc.robot.subsystems.util.ReefAlignmentPID;
+import frc.robot.subsystems.util.ReefDisplay;
 
 public class DriveToReef extends SequentialCommandGroup {
 
     // reefPose can be a number from 0 through 5
 
-    private static final double DEADBAND = 0.15;
-    private static final double MAX_SPEED = 0.2;
     private CommandSwerveDrivetrain swerve;
-    public DriveToReef(CommandSwerveDrivetrain swerve, int reefPose) {
+    public DriveToReef(CommandSwerveDrivetrain swerve, ReefDisplay reefDisplay, ReefAlignmentPID reefAlignmentPID, int reefPose) {
 
         this.swerve = swerve;
 
@@ -27,9 +28,18 @@ public class DriveToReef extends SequentialCommandGroup {
         // Add conditional logic to choose commands
         addCommands(
             new DeferredCommand(
-                () -> (new ConditionalAllianceCommand(
-                    new DriveToPoseUniversal(swerve, addRCtoFC(Constants.AutoDriveConstants.BLUE_REEF_POSES[reefPose])),
-                    new DriveToPoseUniversal(swerve, addRCtoFC(Constants.AutoDriveConstants.BLUE_REEF_POSES[reefPose]))
+                () -> (new SequentialCommandGroup(
+                    new DisplayImageCommand(reefDisplay, reefPose),
+                    new InstantCommand(
+                        () -> PPHolonomicDriveController.overrideRotationFeedback(reefAlignmentPID::getPIDCalculation)
+                    ),
+                    new ConditionalAllianceCommand(
+                        new DriveToPoseUniversal(swerve, addRCtoFC(Constants.AutoDriveConstants.BLUE_REEF_POSES[reefPose])),
+                        new DriveToPoseUniversal(swerve, addRCtoFC(Constants.AutoDriveConstants.RED_REEF_POSES[reefPose]))
+                    ),
+                    new InstantCommand(
+                        () -> PPHolonomicDriveController.clearFeedbackOverrides()
+                    )
                 )),
                 getRequirements()
             )
@@ -44,9 +54,5 @@ public class DriveToReef extends SequentialCommandGroup {
         double newY = robotPose.getY() + (xOffset * Math.sin(robotPose.getRotation().getRadians()) + yOffset * Math.cos(robotPose.getRotation().getRadians()));
         Pose2d calculated = new Pose2d(newX, newY, robotPose.getRotation());
         return calculated;
-    }
-
-    private double applyDeadband(double value) {
-        return Math.abs(value) > DEADBAND ? value : 0.0 * MAX_SPEED;
     }
 }

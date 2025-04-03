@@ -5,20 +5,26 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.constants.Constants;
 import frc.robot.constants.MathUtils;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
+
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveTeleop extends Command {
     private final CommandSwerveDrivetrain drivetrain;
     private final CommandXboxController controller;
 
-    private static final double MAX_TRANSLATION_SPEED = 3.0; // meters per second
+    private static final double MAX_TRANSLATION_SPEED = 2.0; // meters per second
     private static final double MAX_ROTATION_SPEED = Math.PI; // radians per second
     private static final double DEADBAND = 0.11;
+    private static final double SLOWDOWN_DISTANCE = Meters.convertFrom(28, Inches);
 
     private double targetAngle, prevTargetAngle = 0;
 
@@ -31,9 +37,10 @@ public class SwerveTeleop extends Command {
         
         // Initialize the PID controller for rotation
         // TODO CUSTOMIZE THIS!
-        rotationPID = new PIDController(5.0, 0.0, 0.3); // Tuned PID gains
+        rotationPID = new PIDController(Constants.SwerveConstants.REEF_ROTATION_PID_KP, Constants.SwerveConstants.REEF_ROTATION_PID_KI, Constants.SwerveConstants.REEF_ROTATION_PID_KD); // Tuned PID gains
         rotationPID.setTolerance(0.01); // Tolerance for stopping rotation
         rotationPID.setIntegratorRange(-Math.PI, Math.PI);
+        rotationPID.enableContinuousInput(-Math.PI, Math.PI);
 
         addRequirements(drivetrain);
     }
@@ -85,15 +92,27 @@ public class SwerveTeleop extends Command {
             rotation = Math.max(-MAX_ROTATION_SPEED, Math.min(MAX_ROTATION_SPEED, rotation));
         }
 
-        // Pose analyzing and estimation
-        
-        // check the nearest border that's about to be hit and get the minimum distance
-        // convert translations to angle
+        // Translation2d collisionPoint = MathUtils.findClosestPointOnTravelEdge(
+        //     drivetrain.getState().Pose, translationX, translationY, Constants.AutoDriveConstants.BORDER_POSES);
 
-        // grab pose of the whole front (14 inches from center to either end, done robot-centric) and new angle and pass into field border, blue reef border, red reef border to get distance
+        // if (collisionPoint == null) {
+        //     collisionPoint = new Translation2d(Double.MAX_VALUE, Double.MAX_VALUE);
+        // }
 
-        // get the minimum distance of the three borders and two edges and pass that into a function that slows the
-        // robot down as it reaches a wall
+        // double slowdown = collisionPoint.getDistance(drivetrain.getState().Pose.getTranslation()) / SLOWDOWN_DISTANCE;
+        // // SmartDashboard.putNumber("Slowdown", slowdown);
+
+        // slowdown = Math.min(1.0, slowdown);
+
+        // double magnitude = Math.hypot(translationX, translationY);
+        // double direction = Math.atan2(translationY, translationX);
+
+        // // Apply slowdown factor
+        // magnitude *= slowdown;
+
+        // // Convert back to translational velocity
+        // translationX = magnitude * Math.cos(direction);
+        // translationY = magnitude * Math.sin(direction);
 
         // Create a field-centric swerve request
         SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric()
@@ -128,7 +147,13 @@ public class SwerveTeleop extends Command {
         } else if (controller.b().getAsBoolean()) {
             return ((DriverStation.getAlliance().get().compareTo(DriverStation.Alliance.Blue) == 0) ? -90 : 90) * Math.PI / 180.0;
         } else if (controller.a().getAsBoolean()) {
-            return (-90) * Math.PI / 180.0;
+            Translation2d target = DriverStation.getAlliance().get().compareTo(Alliance.Blue) == 0 ? Constants.AutoDriveConstants.BLUE_REEF_CENTER : Constants.AutoDriveConstants.RED_REEF_CENTER;
+
+            double deltaX = target.getX() - drivetrain.getState().Pose.getX();
+            double deltaY = target.getY() - drivetrain.getState().Pose.getY();
+
+            // Compute absolute angle to the target
+            return targetAngle = Math.atan2(deltaY, deltaX);
         }
         return 1e9; // No snap requested
     }

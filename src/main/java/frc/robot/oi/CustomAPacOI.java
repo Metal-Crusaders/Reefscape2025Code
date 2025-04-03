@@ -11,6 +11,10 @@ public class CustomAPacOI {
     public JoystickButton l3LeftButton, l3RightButton, l2LeftButton, l2RightButton, l1Button, intakeButton;
     public JoystickButton algaeHighButton, algaeLowButton, algaeProcessButton;
     public JoystickButton restModeButton, coralShakeModeButton;
+    public JoystickButton closeCenterButton, closeLeftButton, closeRightButton, farCenterButton, farLeftButton, farRightButton;
+    public JoystickButton reefDriveRestButton;
+    public JoystickButton climbUpButton, climbDownButton;
+
 
     public CustomAPacOI() {
         aPac1 = new Joystick(Constants.OIConstants.APAC1);
@@ -33,7 +37,19 @@ public class CustomAPacOI {
 
         restModeButton = new JoystickButton(aPac1, 12);
 
-        coralShakeModeButton = new JoystickButton(aPac2, 1);
+        coralShakeModeButton = new JoystickButton(aPac2, 8);
+
+        closeCenterButton = new JoystickButton(aPac2, 4);
+        closeLeftButton = new JoystickButton(aPac2, 5);
+        closeRightButton = new JoystickButton(aPac2, 3);
+        farCenterButton = new JoystickButton(aPac2, 1);
+        farLeftButton = new JoystickButton(aPac2, 6);
+        farRightButton = new JoystickButton(aPac2, 2);
+
+        climbDownButton = new JoystickButton(aPac2, 11);
+        climbUpButton = new JoystickButton(aPac2, 12);
+
+        reefDriveRestButton = new JoystickButton(aPac2, 7);
     }
     
     

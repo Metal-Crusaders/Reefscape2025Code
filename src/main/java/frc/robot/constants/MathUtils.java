@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public class MathUtils {
 
@@ -60,79 +61,68 @@ public class MathUtils {
         return closest;
     }
 
-    public static boolean withinField(Pose2d point, Pose2d[] polygon) {
-        int n = polygon.length;
-        if (n < 3) return false; // Not a valid polygon
+    public static Translation2d findClosestPointOnTravelEdge(Pose2d robotPose, double translationX, double translationY, Translation2d[] borderPoints) {
+        Translation2d robotPosition = robotPose.getTranslation();
 
-        boolean inside = false;
-        double px = point.getX(), py = point.getY();
+        // Compute the unit direction of travel
+        double velocityMagnitude = Math.hypot(translationX, translationY);
+        if (velocityMagnitude == 0) {
+            return null; // Robot is not moving
+        }
+        double dirX = translationX / velocityMagnitude;
+        double dirY = translationY / velocityMagnitude;
 
-        for (int i = 0, j = n - 1; i < n; j = i++) {
-            Pose2d pi = polygon[i];
-            Pose2d pj = polygon[j];
+        Translation2d closestPoint = null;
+        double minAngle = Double.MAX_VALUE;
+        Translation2d bestP1 = null, bestP2 = null;
 
-            double xi = pi.getX(), yi = pi.getY();
-            double xj = pj.getX(), yj = pj.getY();
+        // Find the polygon edge the robot is traveling toward
+        for (int i = 0; i < borderPoints.length; i++) {
+            Translation2d p1 = borderPoints[i];
+            Translation2d p2 = borderPoints[(i + 1) % borderPoints.length]; // Wrap around
 
-            // Check if the point's y is within the range of the segment's y values
-            if ((yi > py) != (yj > py)) {
-                // Compute the x coordinate of the intersection
-                double xIntersect = xi + (py - yi) * (xj - xi) / (yj - yi);
-                
-                // If the point's x is to the left of the intersection, toggle inside flag
-                if (px < xIntersect) {
-                    inside = !inside;
-                }
+            // Compute vector from robot to the line segment
+            double edgeX = p2.getX() - p1.getX();
+            double edgeY = p2.getY() - p1.getY();
+            double toEdgeX = (p1.getX() + p2.getX()) / 2 - robotPosition.getX();
+            double toEdgeY = (p1.getY() + p2.getY()) / 2 - robotPosition.getY();
+
+            // Compute angle between movement vector and edge direction
+            double dotProduct = (toEdgeX * dirX + toEdgeY * dirY);
+            double magnitudeA = Math.hypot(toEdgeX, toEdgeY);
+            double magnitudeB = Math.hypot(dirX, dirY);
+            double angle = Math.acos(dotProduct / (magnitudeA * magnitudeB));
+
+            if (dotProduct > 0 && angle < minAngle) { // Edge is in the direction of travel
+                minAngle = angle;
+                bestP1 = p1;
+                bestP2 = p2;
             }
         }
 
-        return inside;
-    }
-
-    public static Pose2d getRayIntersection(Pose2d pose, Pose2d[] polygon) {
-        double px = pose.getX(), py = pose.getY();
-        double dx = pose.getRotation().getCos(), dy = pose.getRotation().getSin();
-
-        Pose2d closestIntersection = null;
-        double minDistance = Double.POSITIVE_INFINITY;
-
-        int n = polygon.length;
-        for (int i = 0, j = n - 1; i < n; j = i++) {
-            Pose2d p1 = polygon[j];
-            Pose2d p2 = polygon[i];
-
-            Pose2d intersection = getLineIntersection(px, py, dx, dy, p1.getX(), p1.getY(), p2.getX(), p2.getY());
-
-            if (intersection != null) {
-                double distance = Math.hypot(intersection.getX() - px, intersection.getY() - py);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestIntersection = intersection;
-                }
-            }
+        // If a valid edge is found, get the closest point on it
+        if (bestP1 != null && bestP2 != null) {
+            closestPoint = closestPointOnSegment(bestP1, bestP2, robotPosition);
         }
-        return closestIntersection;
+
+        return closestPoint;
     }
 
-    /**
-     * Computes the intersection point between a ray (px, py) + t*(dx, dy)
-     * and a line segment (x1, y1) -> (x2, y2).
-     * Returns the intersection point or null if there is no intersection.
-     */
-    private static Pose2d getLineIntersection(double px, double py, double dx, double dy,
-                                              double x1, double y1, double x2, double y2) {
-        double sx = x2 - x1, sy = y2 - y1; // Segment direction vector
-        double denom = dx * sy - dy * sx;
+    // Computes the closest point on a line segment (p1, p2) to a given point
+    private static Translation2d closestPointOnSegment(Translation2d p1, Translation2d p2, Translation2d point) {
+        double segmentLengthSquared = Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2);
+        if (segmentLengthSquared == 0) return p1; // p1 and p2 are the same point
 
-        if (Math.abs(denom) < 1e-9) return null; // Lines are parallel (no intersection)
+        // Project point onto the segment, clamping t to [0,1] to stay within segment bounds
+        double t = ((point.getX() - p1.getX()) * (p2.getX() - p1.getX()) +
+                    (point.getY() - p1.getY()) * (p2.getY() - p1.getY())) / segmentLengthSquared;
+        t = Math.max(0, Math.min(1, t)); // Clamp to segment
 
-        double t = ((x1 - px) * sy - (y1 - py) * sx) / denom;
-        double u = ((x1 - px) * dy - (y1 - py) * dx) / denom;
-
-        if (t >= 0 && u >= 0 && u <= 1) {
-            return new Pose2d(px + t * dx, py + t * dy, new Rotation2d());
-        }
-        return null; // No valid intersection
+        // Compute the closest point
+        return new Translation2d(
+            p1.getX() + t * (p2.getX() - p1.getX()),
+            p1.getY() + t * (p2.getY() - p1.getY())
+        );
     }
-    
+
 }

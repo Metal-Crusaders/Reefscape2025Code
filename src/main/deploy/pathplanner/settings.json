@@ -3,8 +3,9 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "OpenSidePaths",
     "CenterPaths",
+    "OpenSidePaths",
+    "PathfindingPaths",
     "ProcessorSidePaths"
   ],
   "autoFolders": [],

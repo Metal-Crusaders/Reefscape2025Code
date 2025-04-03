@@ -11,6 +11,8 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Set;
+
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.elevator.ElevatorPreset;
 import frc.robot.commands.elevator.ElevatorTeleop;
@@ -35,6 +39,7 @@ import frc.robot.commands.scoring.coral.ScoreCoral;
 import frc.robot.commands.scoring.coral.ScoreCoralL1;
 import frc.robot.commands.swerve.DriveToReef;
 import frc.robot.commands.swerve.DriverAffectedDriveToPose;
+import frc.robot.commands.swerve.SmartDriveToReef;
 import frc.robot.commands.swerve.SwerveTeleop;
 import frc.robot.commands.swerve.AutoDriveProcessor;
 
@@ -43,6 +48,8 @@ import frc.robot.commands.swerve.CloseDriveToClosestReefGoodOffset;
 import frc.robot.commands.swerve.CloseDriveToPose;
 import frc.robot.commands.swerve.SwerveTeleopShortTerm;
 import frc.robot.commands.utils.CoralConditionalCommand;
+import frc.robot.commands.utils.DisplayImageCommand;
+import frc.robot.commands.utils.DriverInterruptible;
 import frc.robot.commands.utils.JoystickInterruptible;
 import frc.robot.commands.auto.center.CenterL3AndDoubleProcessAuto;
 import frc.robot.commands.auto.center.TestAlgaeL3Auto;
@@ -76,6 +83,8 @@ import frc.robot.subsystems.scoring.AlgaePivot;
 import frc.robot.subsystems.scoring.CoralShooter;
 import frc.robot.subsystems.swerve.CommandSwerveDrivetrain;
 import frc.robot.subsystems.swerve.SwerveTelemetry;
+import frc.robot.subsystems.util.ReefAlignmentPID;
+import frc.robot.subsystems.util.ReefDisplay;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -89,6 +98,9 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final SwerveTelemetry logger = new SwerveTelemetry(MaxSpeed);
 
+    public final ReefAlignmentPID reefAlignmentPID = new ReefAlignmentPID(drivetrain);
+    public final ReefDisplay reefDisplay = new ReefDisplay();
+
     public final Elevator elevator = new Elevator();
     public final CoralShooter coralShooter = new CoralShooter();
     public final AlgaeClaw algaeClaw = new AlgaeClaw();
@@ -97,6 +109,7 @@ public class RobotContainer {
     // CAMERA STUFF // TODO UNCOMMENT THIS WHEN PHOTONVISION STUFF COMES OUT
     public AprilTagCamera camera1 = new AprilTagCamera(Constants.CameraConstants.CAMERA_1_NAME, Constants.CameraConstants.CAMERA_1_POS, drivetrain);
     public AprilTagCamera camera2 = new AprilTagCamera(Constants.CameraConstants.CAMERA_2_NAME, Constants.CameraConstants.CAMERA_2_POS, drivetrain);
+    // public AprilTagCamera camera3 = new AprilTagCamera(Constants.CameraConstants.CAMERA_3_NAME, Constants.CameraConstants.CAMERA_3_POS, drivetrain);
 
     // COMMANDS!!
 
@@ -126,13 +139,12 @@ public class RobotContainer {
     private final Command processAlgae = new ProcessAlgaeSubroutine(algaeClaw);
 
     // reef coroutines
-    private final Command testCmd = new DriverAffectedDriveToPose(drivetrain, new Pose2d(6.507, 4.030, new Rotation2d(0)), driverController);
-    private final Command closeCenterAutoDrive = new DriveToReef(drivetrain, 1);
-    private final Command closeLeftAutoDrive   = new DriveToReef(drivetrain, 0);
-    private final Command closeRightAutoDrive  = new DriveToReef(drivetrain, 2);
-    private final Command farCenterAutoDrive   = new DriveToReef(drivetrain, 4);
-    private final Command farLeftAutoDrive     = new DriveToReef(drivetrain, 5);
-    private final Command farRightAutoDrive    = new DriveToReef(drivetrain, 3);
+    private final Command closeCenterAutoDrive = new JoystickInterruptible(new DriveToReef(drivetrain, reefDisplay, reefAlignmentPID, 1), driverController, 0.5);
+    private final Command closeLeftAutoDrive   = new JoystickInterruptible(new DriveToReef(drivetrain, reefDisplay, reefAlignmentPID, 0), driverController, 0.5);
+    private final Command closeRightAutoDrive  = new JoystickInterruptible(new DriveToReef(drivetrain, reefDisplay, reefAlignmentPID, 2), driverController, 0.5);
+    private final Command farCenterAutoDrive   = new JoystickInterruptible(new DriveToReef(drivetrain, reefDisplay, reefAlignmentPID, 4), driverController, 0.5);
+    private final Command farLeftAutoDrive     = new JoystickInterruptible(new DriveToReef(drivetrain, reefDisplay, reefAlignmentPID, 5), driverController, 0.5);
+    private final Command farRightAutoDrive    = new JoystickInterruptible(new DriveToReef(drivetrain, reefDisplay, reefAlignmentPID, 3), driverController, 0.5);
 
     // coroutines
     // write code for all coroutines under the coroutines folder here:
@@ -183,8 +195,18 @@ public class RobotContainer {
         driverController.start().whileTrue(new InstantCommand(() -> drivetrain.resetRotation(new Rotation2d(0)), drivetrain));
         driverController.back().whileTrue(processorAutoDrive);
 
-        // driverController.leftBumper().whileTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(reefAutoDriveSelector.getSelected())));
-        driverController.rightBumper().onTrue(testCmd);
+        // driverController.leftBumper().onTrue(
+        //     new SequentialCommandGroup(
+        //         new CloseDriveToClosestReefGoodOffset(drivetrain),
+        //         new AutoLineUpReefUniversal(drivetrain, 0)
+        //     )
+        // );
+        // driverController.rightBumper().onTrue(
+        //     new SequentialCommandGroup(
+        //         new CloseDriveToClosestReefGoodOffset(drivetrain),
+        //         new AutoLineUpReefUniversal(drivetrain, 1)
+        //     )
+        // );
 
         // SysID Routines
         // driverController.back().and(driverController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -226,6 +248,37 @@ public class RobotContainer {
         operatorBoard.coralShakeModeButton.debounce(Constants.OIConstants.REST_DEBOUNCING_TIME).onTrue(
             coralShakeCoroutine
         );
+
+        // Reef Buttons
+        operatorBoard.closeCenterButton.debounce(Constants.OIConstants.REST_DEBOUNCING_TIME).onTrue(
+            closeCenterAutoDrive
+        );
+        operatorBoard.closeLeftButton.debounce(Constants.OIConstants.REST_DEBOUNCING_TIME).onTrue(
+            closeLeftAutoDrive
+        );
+        operatorBoard.closeRightButton.debounce(Constants.OIConstants.REST_DEBOUNCING_TIME).onTrue(
+            closeRightAutoDrive
+        );
+        operatorBoard.farCenterButton.debounce(Constants.OIConstants.REST_DEBOUNCING_TIME).onTrue(
+            farCenterAutoDrive
+        );
+        operatorBoard.farLeftButton.debounce(Constants.OIConstants.REST_DEBOUNCING_TIME).onTrue(
+            farLeftAutoDrive
+        );
+        operatorBoard.farRightButton.debounce(Constants.OIConstants.REST_DEBOUNCING_TIME).onTrue(
+            farRightAutoDrive
+        );
+        operatorBoard.reefDriveRestButton.debounce(Constants.OIConstants.REST_DEBOUNCING_TIME).onTrue(
+            new SequentialCommandGroup(
+                new DisplayImageCommand(reefDisplay, 6),
+                new InstantCommand(() -> CommandScheduler.getInstance().cancel(closeCenterAutoDrive)),
+                new InstantCommand(() -> CommandScheduler.getInstance().cancel(closeLeftAutoDrive)),
+                new InstantCommand(() -> CommandScheduler.getInstance().cancel(closeRightAutoDrive)),
+                new InstantCommand(() -> CommandScheduler.getInstance().cancel(farCenterAutoDrive)),
+                new InstantCommand(() -> CommandScheduler.getInstance().cancel(farLeftAutoDrive)),
+                new InstantCommand(() -> CommandScheduler.getInstance().cancel(farRightAutoDrive))
+            )
+        );
     }
 
     private void initializeAutoCommands() {
@@ -254,15 +307,6 @@ public class RobotContainer {
 
     public RobotContainer() {
 
-        // Reef Mock AutoDrive
-        reefAutoDriveSelector.setDefaultOption("Close Center Reef", closeCenterAutoDrive);
-        reefAutoDriveSelector.addOption("Close Left Reef", closeLeftAutoDrive);
-        reefAutoDriveSelector.addOption("Close Right Reef", closeRightAutoDrive);
-        reefAutoDriveSelector.addOption("Far Center Reef", farCenterAutoDrive);
-        reefAutoDriveSelector.addOption("Far Left Reef", farLeftAutoDrive);
-        reefAutoDriveSelector.addOption("Far Right Reef", farRightAutoDrive);
-        SmartDashboard.putData("Reef Auto Drive Selector", reefAutoDriveSelector);
-
         initiateNamedCoroutines();
         configureDefaultCommands();
         configureBindings();
@@ -271,6 +315,10 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return autoSelector.getSelected();
-        // return null;
+        // return new SequentialCommandGroup(
+        //     new CloseDriveToClosestReefGoodOffset(drivetrain),
+        //     new AutoLineUpReefUniversal(drivetrain, 1)
+        // );
     }
+
 }

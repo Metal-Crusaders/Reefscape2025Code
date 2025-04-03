@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,7 +24,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-      PathfindingCommand.warmupCommand().schedule();
+      // PathfindingCommand.warmupCommand().schedule(); // TODO add this back?
   }
 
   @Override
@@ -65,7 +66,21 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+    // Visualize ReefStateManager
+
+    // SmartDashboard.putString("Reef State Manager - Reef Pose", ReefStateManager.TARGET_POSE.toString());
+    // SmartDashboard.putNumber("Reef State Manager - Reef ID", ReefStateManager.REEF_ID);
+    // SmartDashboard.putNumber("Reef State Manager - Prev Reef ID", ReefStateManager.PREV_REEF_ID);
+    // SmartDashboard.putNumber("Reef State Manager - Reef Distance", ReefStateManager.REEF_DISTANCE);
+    // SmartDashboard.putBoolean("Reef State Manager - Approach Left", ReefStateManager.APPROACH_LEFT);
+    // SmartDashboard.putBoolean("Reef State Manager - Driving Far", ReefStateManager.DRIVING_FAR);
+    // SmartDashboard.putNumber("Reef State Manager - Left Approach Distance", ReefStateManager.LEFT_APPROACH_DISTANCE);
+    // SmartDashboard.putNumber("Reef State Manager - Right Approach Distance", ReefStateManager.RIGHT_APPROACH_DISTANCE);
+    
+
+  }
 
   @Override
   public void teleopExit() {}

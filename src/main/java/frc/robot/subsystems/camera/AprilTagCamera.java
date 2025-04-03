@@ -54,7 +54,7 @@ public class AprilTagCamera extends SubsystemBase {
 
         var results = camera.getAllUnreadResults();
 
-        for (PhotonPipelineResult result : results) {
+        for (PhotonPipelineResult result : results) {   
 
             SmartDashboard.putBoolean("AprilTag Detected", result.hasTargets());
 
